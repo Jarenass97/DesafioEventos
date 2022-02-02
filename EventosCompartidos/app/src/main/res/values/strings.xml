@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Eventos Compartidos</string>
+    <string name="strCorreo">E-mail</string>
+    <string name="strPasswd">Password</string>
+    <string name="strIniciarSesion">Log in</string>
+    <string name="strRegistrar">Sign in</string>
+    <string name="strLoginGoogle">Log in with Google</string>
+    <string name="strMsgLogin">Enter your user data:</string>
 </resources>
