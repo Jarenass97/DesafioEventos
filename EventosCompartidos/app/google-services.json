@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "120741973731",
+    "project_id": "eventos-compartidos",
+    "storage_bucket": "eventos-compartidos.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120741973731:android:73338d76265eef534dbfd6",
+        "android_client_info": {
+          "package_name": "com.example.eventoscompartidos"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120741973731-rmnotsd7v3r1b08d24f15ptdgt1snu8p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.eventoscompartidos",
+            "certificate_hash": "7554e45318936224394137cbe84224c18f28e536"
+          }
+        },
+        {
+          "client_id": "120741973731-sh0bf21krjuahb5dhvv3s0igjce44dtn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8clhFu5RltF5Q2f7DLIrdW8jyIJRoDT0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120741973731-sh0bf21krjuahb5dhvv3s0igjce44dtn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
