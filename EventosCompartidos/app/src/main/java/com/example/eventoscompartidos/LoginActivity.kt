@@ -5,12 +5,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import assistant.Auxiliar
 import assistant.CamposBD.ACTIVADO__USUARIOS
 import assistant.CamposBD.COL_USUARIOS
 import assistant.CamposBD.EMAIL__USUARIOS
+import assistant.CamposBD.ROL__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -26,6 +28,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
+import model.Rol
 import model.Usuario
 
 class LoginActivity : AppCompatActivity() {
@@ -141,10 +144,9 @@ class LoginActivity : AppCompatActivity() {
 
     //*********************************************************************************
     private fun acceder(email: String) {
-        val usuario = catchUser(email)
+        val usuario:Usuario? = catchUser(email)
         if (usuario == null) {
             registrarUsuario(email)
-            irMain(email)
         } else {
             if (usuario.isActivado()) {
                 irMain(email)
@@ -166,10 +168,13 @@ class LoginActivity : AppCompatActivity() {
         runBlocking {
             val job: Job = launch {
                 val data: DocumentSnapshot = getUser(email)
-                if (data.exists()) usuario = Usuario(
-                    data.get(EMAIL__USUARIOS) as String,
-                    data.get(ACTIVADO__USUARIOS) as Boolean
-                )
+                if (data.exists()) {
+                    usuario = Usuario(
+                        data.get(EMAIL__USUARIOS) as String,
+                        Rol.valueOf(data.get(ROL__USUARIOS) as String),
+                        data.get(ACTIVADO__USUARIOS) as Boolean
+                    )
+                }
             }
             job.join()
         }
@@ -186,6 +191,7 @@ class LoginActivity : AppCompatActivity() {
     private fun registrarUsuario(email: String) {
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
+            ROL__USUARIOS to Rol.NO_ASIGNADO,
             ACTIVADO__USUARIOS to false
         )
         db.collection(COL_USUARIOS).document(email)
