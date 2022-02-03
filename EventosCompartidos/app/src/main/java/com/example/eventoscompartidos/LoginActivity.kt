@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import assistant.Auxiliar
@@ -104,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            irMain(email)
+            acceder(email)
         }
     }
 
@@ -144,12 +143,12 @@ class LoginActivity : AppCompatActivity() {
 
     //*********************************************************************************
     private fun acceder(email: String) {
-        val usuario:Usuario? = catchUser(email)
+        val usuario: Usuario? = catchUser(email)
         if (usuario == null) {
             registrarUsuario(email)
         } else {
             if (usuario.isActivado()) {
-                irMain(email)
+                irMain(usuario)
                 Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
             } else {
                 Toast.makeText(this, getString(R.string.strInactivo), Toast.LENGTH_SHORT).show()
@@ -157,10 +156,10 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun irMain(email: String) {
-        Auxiliar.email = email
-        /*val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)*/
+    private fun irMain(usuario: Usuario) {
+        Auxiliar.usuario = usuario
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
     }
 
     private fun catchUser(email: String): Usuario? {

@@ -1,5 +1,7 @@
 package assistant
 
+import model.Usuario
+
 object Auxiliar {
-    lateinit var email: String
+    lateinit var usuario: Usuario
 }
