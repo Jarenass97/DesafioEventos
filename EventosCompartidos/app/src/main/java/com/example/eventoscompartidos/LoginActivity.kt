@@ -190,7 +190,7 @@ class LoginActivity : AppCompatActivity() {
     private fun registrarUsuario(email: String) {
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
-            ROL__USUARIOS to Rol.NO_ASIGNADO,
+            ROL__USUARIOS to Rol.USUARIO,
             ACTIVADO__USUARIOS to false
         )
         db.collection(COL_USUARIOS).document(email)
