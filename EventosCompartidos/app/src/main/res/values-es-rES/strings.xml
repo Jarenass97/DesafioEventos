@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="strCorreo">Correo Electrónico</string>
+    <string name="strPasswd">Contraseña</string>
+    <string name="strIniciarSesion">Iniciar Sesión</string>
+    <string name="strRegistrar">Registrar</string>
+    <string name="strLoginGoogle">Continuar con Google</string>
+    <string name="strMsgLogin">Introduce tus datos de usuario:</string>
+    <string name="strTituloAutenticacion">Autenticación</string>
+    <string name="strCamposVacios">Fill in the fields</string>
+    <string name="strMensajeErrorAuth">Se ha producido un error autenticando al usuario</string>
+    <string name="strAceptar">Aceptar</string>
+    <string name="strSuccess">éxito!</string>
+    <string name="strInactivo">Usuario no activado</string>
+</resources>

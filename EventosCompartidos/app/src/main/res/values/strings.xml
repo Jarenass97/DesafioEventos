@@ -1,3 +1,18 @@
 <resources>
-    <string name="app_name">Eventos Compartidos</string>
+    <string name="request_id_token" translatable="false">120741973731-sh0bf21krjuahb5dhvv3s0igjce44dtn.apps.googleusercontent.com</string>
+    <string name="prefs_file" translatable="false">com.example.eventoscompartidos.PREFERENCE_FILE_KEY</string>
+    <string name="app_name" translatable="false">Holidays4Us</string>
+    <string name="strCorreo">E-mail</string>
+    <string name="strPasswd">Password</string>
+    <string name="strIniciarSesion">Log in</string>
+    <string name="strRegistrar">Sign in</string>
+    <string name="strLoginGoogle">Log in with Google</string>
+    <string name="strMsgLogin">Enter your user data:</string>
+    <string name="strTituloAutenticacion">Authentication</string>
+    <string name="strCamposVacios">Fill in the fields</string>
+    <string name="strError" translatable="false">Error</string>
+    <string name="strMensajeErrorAuth">An error occurred authenticating the user</string>
+    <string name="strAceptar">Accept</string>
+    <string name="strSuccess">success!</string>
+    <string name="strInactivo">User not activated</string>
 </resources>
