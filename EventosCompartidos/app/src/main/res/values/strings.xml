@@ -13,4 +13,6 @@
     <string name="strError" translatable="false">Error</string>
     <string name="strMensajeErrorAuth">An error occurred authenticating the user</string>
     <string name="strAceptar">Accept</string>
+    <string name="strSuccess">success!</string>
+    <string name="strInactivo">User not activated</string>
 </resources>

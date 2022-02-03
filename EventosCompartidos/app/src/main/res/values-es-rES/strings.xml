@@ -10,4 +10,6 @@
     <string name="strCamposVacios">Fill in the fields</string>
     <string name="strMensajeErrorAuth">Se ha producido un error autenticando al usuario</string>
     <string name="strAceptar">Aceptar</string>
+    <string name="strSuccess">éxito!</string>
+    <string name="strInactivo">Usuario no activado</string>
 </resources>

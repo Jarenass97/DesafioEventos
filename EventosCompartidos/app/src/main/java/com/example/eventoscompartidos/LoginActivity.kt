@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import assistant.Auxiliar
+import assistant.CamposBD.ACTIVADO__USUARIOS
+import assistant.CamposBD.COL_USUARIOS
+import assistant.CamposBD.EMAIL__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -15,10 +18,20 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.tasks.await
+import model.Usuario
 
 class LoginActivity : AppCompatActivity() {
     private var RC_SIGN_IN = 1
+    private val db = Firebase.firestore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -36,12 +49,13 @@ class LoginActivity : AppCompatActivity() {
                     .signInWithEmailAndPassword(edCorreo.text.toString(), edPasswd.text.toString())
                     .addOnCompleteListener { consulta ->
                         if (consulta.isSuccessful) {
-                            irMain(consulta.result?.user?.email ?: "")
+                            acceder(consulta.result?.user?.email ?: "")
                         } else {
                             showAlert()
                         }
                     }
-            }else Toast.makeText(this, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)
+                .show()
         }
 
         btnReg.setOnClickListener() {
@@ -51,12 +65,13 @@ class LoginActivity : AppCompatActivity() {
                     edPasswd.text.toString()
                 ).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        irMain(it.result?.user?.email ?: "")
+                        acceder(it.result?.user?.email ?: "")
                     } else {
                         showAlert()
                     }
                 }
-            }else Toast.makeText(this, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT).show()
+            } else Toast.makeText(this, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)
+                .show()
         }
 
 
@@ -86,7 +101,6 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            //Tenemos iniciada la sesión.
             irMain(email)
         }
     }
@@ -94,20 +108,16 @@ class LoginActivity : AppCompatActivity() {
     //*******************************************************************************************
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        // Si la respuesta de esta activity se corresponde con la inicializada es que viene de la autenticación de Google.
         if (requestCode == RC_SIGN_IN) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                // Google Sign In was successful, authenticate with Firebase
                 val account = task.getResult(ApiException::class.java)!!
-                //Ya tenemos la id de la cuenta. Ahora nos autenticamos con FireBase.
                 val credential: AuthCredential =
                     GoogleAuthProvider.getCredential(account.idToken, null)
                 FirebaseAuth.getInstance().signInWithCredential(credential)
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
-                            irMain(account.email ?: "")
+                            acceder(account.email ?: "")
                         } else {
                             showAlert()
                         }
@@ -130,9 +140,59 @@ class LoginActivity : AppCompatActivity() {
     }
 
     //*********************************************************************************
+    private fun acceder(email: String) {
+        val usuario = catchUser(email)
+        if (usuario == null) {
+            registrarUsuario(email)
+            irMain(email)
+        } else {
+            if (usuario.isActivado()) {
+                irMain(email)
+                Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, getString(R.string.strInactivo), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     private fun irMain(email: String) {
-        Toast.makeText(this, "Accediendo $email", Toast.LENGTH_SHORT).show()
+        Auxiliar.email = email
         /*val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)*/
+    }
+
+    private fun catchUser(email: String): Usuario? {
+        var usuario: Usuario? = null
+        runBlocking {
+            val job: Job = launch {
+                val data: DocumentSnapshot = getUser(email)
+                if (data.exists()) usuario = Usuario(
+                    data.get(EMAIL__USUARIOS) as String,
+                    data.get(ACTIVADO__USUARIOS) as Boolean
+                )
+            }
+            job.join()
+        }
+        return usuario
+    }
+
+    private suspend fun getUser(email: String): DocumentSnapshot {
+        return db.collection(COL_USUARIOS)
+            .document(email)
+            .get()
+            .await()
+    }
+
+    private fun registrarUsuario(email: String) {
+        val user = hashMapOf(
+            EMAIL__USUARIOS to email,
+            ACTIVADO__USUARIOS to false
+        )
+        db.collection(COL_USUARIOS).document(email)
+            .set(user)
+            .addOnSuccessListener {
+                Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT)
+                    .show()
+            }
     }
 }
