@@ -103,7 +103,8 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            acceder(email)
+            val usuario: Usuario = catchUser(email)!!
+            irMain(usuario)
         }
     }
 
@@ -147,7 +148,7 @@ class LoginActivity : AppCompatActivity() {
         if (usuario == null) {
             registrarUsuario(email)
         } else {
-            if (usuario.isActivado()) {
+            if (usuario.activado) {
                 irMain(usuario)
                 Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
             } else {
@@ -196,7 +197,7 @@ class LoginActivity : AppCompatActivity() {
         db.collection(COL_USUARIOS).document(email)
             .set(user)
             .addOnSuccessListener {
-                Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT)
+                Toast.makeText(this, getString(R.string.strWaitActivate), Toast.LENGTH_SHORT)
                     .show()
             }
     }

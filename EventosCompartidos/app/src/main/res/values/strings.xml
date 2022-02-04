@@ -15,4 +15,10 @@
     <string name="strAceptar">Accept</string>
     <string name="strSuccess">success!</string>
     <string name="strInactivo">User not activated</string>
+    <string name="strEliminar">Delete</string>
+    <string name="strConfirmacionDeleteUser">Are you sure you want to remove this user?</string>
+    <string name="strCancelar">Cancel</string>
+    <string name="strWaitActivate">Registered successfully. You will be able to access as soon as one of our administrators accepts you.</string>
+    <string name="strAsuntoEmailCuentaEliminada">Account deleted</string>
+    <string name="strTextEmailCuentaEliminada">Your account has been deleted by one of our administrators.</string>
 </resources>

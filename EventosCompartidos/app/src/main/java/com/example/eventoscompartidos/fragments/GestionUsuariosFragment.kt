@@ -25,6 +25,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import model.Rol
 import model.Usuario
+import model.UsuarioGestion
 
 class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
 
@@ -47,16 +48,15 @@ class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
         rvGestionUsuarios.adapter = adaptador
     }
 
-    private fun getUsers(): ArrayList<Usuario> {
-        var usuarios = ArrayList<Usuario>(0)
+    private fun getUsers(): ArrayList<UsuarioGestion> {
+        var usuarios = ArrayList<UsuarioGestion>(0)
         runBlocking {
             val job: Job = launch {
                 val data: QuerySnapshot = usuariosBD() as QuerySnapshot
                 for (dc: DocumentChange in data.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
-                        val user = Usuario(
+                        val user = UsuarioGestion(
                             dc.document.get(EMAIL__USUARIOS).toString(),
-                            Rol.valueOf(dc.document.get(ROL__USUARIOS) as String),
                             dc.document.get(ACTIVADO__USUARIOS) as Boolean
                         )
                         usuarios.add(user)
