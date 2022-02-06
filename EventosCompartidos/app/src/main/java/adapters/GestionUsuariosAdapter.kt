@@ -81,7 +81,6 @@ class GestionUsuariosAdapter(
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
                     gestionUsuariosAdapter.delUser(user)
                     db.collection(COL_USUARIOS).document(user.email).delete()
-                    //enviarEmail(user.email)
                     view.dismiss()
                 }
                 .setNegativeButton(context.getString(R.string.strCancelar)) { view, _ ->
@@ -89,17 +88,6 @@ class GestionUsuariosAdapter(
                 }
                 .setCancelable(true)
                 .create().show()
-        }
-
-        private fun enviarEmail(email: String) {
-            val intent = Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto", email, null)).apply {
-                putExtra(
-                    Intent.EXTRA_SUBJECT,
-                    context.getString(R.string.strAsuntoEmailCuentaEliminada)
-                )
-                putExtra(Intent.EXTRA_TEXT, context.getString(R.string.strTextEmailCuentaEliminada))
-            }
-            context.startActivity(Intent.createChooser(intent,"CUENTA ELIMINADA"))
         }
     }
 

@@ -8,11 +8,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import assistant.CamposBD
+import assistant.Auxiliar.usuario
 import assistant.CamposBD.ACTIVADO__USUARIOS
 import assistant.CamposBD.COL_USUARIOS
 import assistant.CamposBD.EMAIL__USUARIOS
-import assistant.CamposBD.ROL__USUARIOS
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.QuerySnapshot
@@ -23,8 +22,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import model.Rol
-import model.Usuario
 import model.UsuarioGestion
 
 class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
@@ -52,7 +49,7 @@ class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
         var usuarios = ArrayList<UsuarioGestion>(0)
         runBlocking {
             val job: Job = launch {
-                val data: QuerySnapshot = usuariosBD() as QuerySnapshot
+                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
                 for (dc: DocumentChange in data.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val user = UsuarioGestion(
@@ -68,8 +65,9 @@ class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
         return usuarios
     }
 
-    private suspend fun usuariosBD(): Any {
+    private suspend fun queryUsuarios(): Any {
         return db.collection(COL_USUARIOS)
+            .whereNotEqualTo(EMAIL__USUARIOS, usuario.email)
             .get()
             .await()
     }

@@ -20,6 +20,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
@@ -189,16 +190,43 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun registrarUsuario(email: String) {
+        var rol: Rol
+        var act: Boolean
+        val hayRegistrados = usuariosReg()
+        rol = if (hayRegistrados) Rol.USUARIO
+        else Rol.ADMINISTRADOR
+        act = !hayRegistrados
+
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
-            ROL__USUARIOS to Rol.USUARIO,
-            ACTIVADO__USUARIOS to false
+            ROL__USUARIOS to rol,
+            ACTIVADO__USUARIOS to act
         )
         db.collection(COL_USUARIOS).document(email)
             .set(user)
             .addOnSuccessListener {
+                if(hayRegistrados)
                 Toast.makeText(this, getString(R.string.strWaitActivate), Toast.LENGTH_SHORT)
                     .show()
+                else acceder(email)
             }
+    }
+
+    private fun usuariosReg(): Boolean {
+        var reg = false
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
+                reg = data.documentChanges.size > 0
+            }
+            job.join()
+        }
+        return reg
+    }
+
+    private suspend fun queryUsuarios(): Any {
+        return db.collection(COL_USUARIOS)
+            .get()
+            .await()
     }
 }
