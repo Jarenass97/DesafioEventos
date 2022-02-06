@@ -23,4 +23,9 @@
     <string name="strTextEmailCuentaEliminada">Your account has been deleted by one of our administrators.</string>
     <string name="strMenuAdminUsers">Manage users</string>
     <string name="strMenuAdminEvents">Manage events</string>
+    <string name="strAsistentes">Assistants</string>
+    <string name="strNombre">Name</string>
+    <string name="strFecha">Date</string>
+    <string name="strHora">Hour</string>
+    <string name="strCrearEvento">Create event</string>
 </resources>

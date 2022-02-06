@@ -20,4 +20,9 @@
     <string name="strTextEmailCuentaEliminada">Su cuenta ha sido eliminada por uno de nuestros administradores.</string>
     <string name="strMenuAdminUsers">Administrar usuarios</string>
     <string name="strMenuAdminEvents">Administrar eventos</string>
+    <string name="strAsistentes">Asistentes</string>
+    <string name="strNombre">Nombre</string>
+    <string name="strFecha">Fecha</string>
+    <string name="strHora">Hora</string>
+    <string name="strCrearEvento">Crear evento</string>
 </resources>
