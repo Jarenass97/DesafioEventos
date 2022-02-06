@@ -12,4 +12,10 @@
     <string name="strAceptar">Aceptar</string>
     <string name="strSuccess">éxito!</string>
     <string name="strInactivo">Usuario no activado</string>
+    <string name="strEliminar">Eliminar</string>
+    <string name="strConfirmacionDeleteUser">¿Está seguro de eliminar a este usuario?</string>
+    <string name="strCancelar">Cancelar</string>
+    <string name="strWaitActivate">Registrado con éxito. Podrás acceder en cuanto te acepte uno de nuestros administradores.</string>
+    <string name="strAsuntoEmailCuentaEliminada">Cuenta eliminada</string>
+    <string name="strTextEmailCuentaEliminada">Su cuenta ha sido eliminada por uno de nuestros administradores.</string>
 </resources>

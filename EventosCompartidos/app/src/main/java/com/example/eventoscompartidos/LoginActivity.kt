@@ -20,6 +20,7 @@ import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
@@ -103,7 +104,8 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            acceder(email)
+            val usuario: Usuario = catchUser(email)!!
+            irMain(usuario)
         }
     }
 
@@ -147,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
         if (usuario == null) {
             registrarUsuario(email)
         } else {
-            if (usuario.isActivado()) {
+            if (usuario.activado) {
                 irMain(usuario)
                 Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
             } else {
@@ -188,16 +190,43 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun registrarUsuario(email: String) {
+        var rol: Rol
+        var act: Boolean
+        val hayRegistrados = usuariosReg()
+        rol = if (hayRegistrados) Rol.USUARIO
+        else Rol.ADMINISTRADOR
+        act = !hayRegistrados
+
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
-            ROL__USUARIOS to Rol.NO_ASIGNADO,
-            ACTIVADO__USUARIOS to false
+            ROL__USUARIOS to rol,
+            ACTIVADO__USUARIOS to act
         )
         db.collection(COL_USUARIOS).document(email)
             .set(user)
             .addOnSuccessListener {
-                Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT)
+                if(hayRegistrados)
+                Toast.makeText(this, getString(R.string.strWaitActivate), Toast.LENGTH_SHORT)
                     .show()
+                else acceder(email)
             }
+    }
+
+    private fun usuariosReg(): Boolean {
+        var reg = false
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
+                reg = data.documentChanges.size > 0
+            }
+            job.join()
+        }
+        return reg
+    }
+
+    private suspend fun queryUsuarios(): Any {
+        return db.collection(COL_USUARIOS)
+            .get()
+            .await()
     }
 }
