@@ -1,4 +1,4 @@
-package com.example.eventoscompartidos.fragments
+package com.example.eventoscompartidos.fragments.Administrador
 
 import adapters.GestionUsuariosAdapter
 import android.os.Bundle

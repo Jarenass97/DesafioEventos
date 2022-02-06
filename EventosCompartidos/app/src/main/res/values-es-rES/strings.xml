@@ -18,4 +18,6 @@
     <string name="strWaitActivate">Registrado con éxito. Podrás acceder en cuanto te acepte uno de nuestros administradores.</string>
     <string name="strAsuntoEmailCuentaEliminada">Cuenta eliminada</string>
     <string name="strTextEmailCuentaEliminada">Su cuenta ha sido eliminada por uno de nuestros administradores.</string>
+    <string name="strMenuAdminUsers">Administrar usuarios</string>
+    <string name="strMenuAdminEvents">Administrar eventos</string>
 </resources>

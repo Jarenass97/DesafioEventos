@@ -4,10 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.fragment.app.Fragment
-import assistant.Auxiliar
 import assistant.Auxiliar.usuario
-import com.example.eventoscompartidos.fragments.GestionUsuariosFragment
+import com.example.eventoscompartidos.fragments.Administrador.GestionEventosFragment
+import com.example.eventoscompartidos.fragments.Administrador.GestionUsuariosFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -22,17 +24,36 @@ class MainActivity : AppCompatActivity() {
         prefs?.putString("email", usuario.email)
         prefs?.apply()
 
-        if (usuario.isAdmin()) cargarAdministrador()
+        if (usuario.isAdmin()) cargarGestionUsuarios()
         else cargarAppUsuario()
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_admin_actions, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menuAdminUsers -> cargarGestionUsuarios()
+            R.id.menuAdminEvents -> cargarGestionEventos()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun cargarGestionEventos() {
+        title = "Gestión de eventos"
+        fragment = GestionEventosFragment(this)
+        replaceFragment(fragment)
     }
 
     private fun cargarAppUsuario() {
 
     }
 
-    private fun cargarAdministrador() {
-        title = "Activación de usuarios"
+    private fun cargarGestionUsuarios() {
+        title = "Gestión de usuarios"
         fragment = GestionUsuariosFragment(this)
         replaceFragment(fragment)
     }

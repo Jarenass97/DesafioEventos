@@ -21,4 +21,6 @@
     <string name="strWaitActivate">Registered successfully. You will be able to access as soon as one of our administrators accepts you.</string>
     <string name="strAsuntoEmailCuentaEliminada">Account deleted</string>
     <string name="strTextEmailCuentaEliminada">Your account has been deleted by one of our administrators.</string>
+    <string name="strMenuAdminUsers">Manage users</string>
+    <string name="strMenuAdminEvents">Manage events</string>
 </resources>
