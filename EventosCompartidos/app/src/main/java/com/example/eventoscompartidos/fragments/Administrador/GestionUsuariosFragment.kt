@@ -9,9 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import assistant.Auxiliar.usuario
-import assistant.CamposBD.ACTIVADO__USUARIOS
-import assistant.CamposBD.COL_USUARIOS
-import assistant.CamposBD.EMAIL__USUARIOS
+import assistant.BDFirestore.ACTIVADO__USUARIOS
+import assistant.BDFirestore.COL_USUARIOS
+import assistant.BDFirestore.EMAIL__USUARIOS
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.QuerySnapshot

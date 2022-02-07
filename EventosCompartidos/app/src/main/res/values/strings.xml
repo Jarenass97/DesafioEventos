@@ -28,4 +28,6 @@
     <string name="strFecha">Date</string>
     <string name="strHora">Hour</string>
     <string name="strCrearEvento">Create event</string>
+    <string name="strMensajeEliminarEvento">Are you sure you want to delete the event?</string>
+    <string name="strEventoEliminado">Removed event</string>
 </resources>

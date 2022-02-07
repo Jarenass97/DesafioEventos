@@ -1,8 +1,6 @@
 package adapters
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,8 +8,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import assistant.CamposBD.ACTIVADO__USUARIOS
-import assistant.CamposBD.COL_USUARIOS
+import assistant.BDFirestore.ACTIVADO__USUARIOS
+import assistant.BDFirestore.COL_USUARIOS
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

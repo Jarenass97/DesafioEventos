@@ -7,7 +7,7 @@
     <string name="strLoginGoogle">Continuar con Google</string>
     <string name="strMsgLogin">Introduce tus datos de usuario:</string>
     <string name="strTituloAutenticacion">Autenticación</string>
-    <string name="strCamposVacios">Fill in the fields</string>
+    <string name="strCamposVacios">Rellena los campos</string>
     <string name="strMensajeErrorAuth">Se ha producido un error autenticando al usuario</string>
     <string name="strAceptar">Aceptar</string>
     <string name="strSuccess">éxito!</string>
@@ -25,4 +25,6 @@
     <string name="strFecha">Fecha</string>
     <string name="strHora">Hora</string>
     <string name="strCrearEvento">Crear evento</string>
+    <string name="strMensajeEliminarEvento">¿Está seguro de eliminar el evento?</string>
+    <string name="strEventoEliminado">Evento eliminado</string>
 </resources>

@@ -8,10 +8,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import assistant.Auxiliar
-import assistant.CamposBD.ACTIVADO__USUARIOS
-import assistant.CamposBD.COL_USUARIOS
-import assistant.CamposBD.EMAIL__USUARIOS
-import assistant.CamposBD.ROL__USUARIOS
+import assistant.BDFirestore.ACTIVADO__USUARIOS
+import assistant.BDFirestore.COL_USUARIOS
+import assistant.BDFirestore.EMAIL__USUARIOS
+import assistant.BDFirestore.ROL__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException

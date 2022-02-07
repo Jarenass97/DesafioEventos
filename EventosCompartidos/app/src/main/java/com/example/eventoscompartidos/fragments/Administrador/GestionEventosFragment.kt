@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.example.eventoscompartidos.R
@@ -34,12 +35,13 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGestionEventos.setHasFixedSize(true)
         rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
-        //adaptador = GestionEventosAdapter(ventana, getEvents())
-
+        adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+        rvGestionEventos.adapter = adaptador
         btnAddEvent.setOnClickListener {
             crearEvento()
         }
     }
+
 
     private fun crearEvento() {
         val creador = layoutInflater.inflate(R.layout.eventos_creater, null)
@@ -54,17 +56,25 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
             .setPositiveButton("OK") { view, _ ->
                 if (!camposVacios(txtNombre, fecha, hora)) {
                     val ev =
-                        Evento(txtNombre.text.toString(), fecha.text.toString(), hora.text.toString())
-                    Toast.makeText(ventana, ev.toString(), Toast.LENGTH_SHORT).show()
+                        Evento(
+                            txtNombre.text.toString(),
+                            fecha.text.toString(),
+                            hora.text.toString()
+                        )
+                    BDFirestore.addEvento(ev)
+                    adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+                    rvGestionEventos.adapter = adaptador
                     // irMaps(ev)
                 } else {
-                    Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)
+                        .show()
                 }
                 view.dismiss()
             }
             .setCancelable(true)
             .create().show()
     }
+
 
     private fun showDatePickerDialog(edFecha: EditText) {
         val newFragment = DatePickerFragment(edFecha)
