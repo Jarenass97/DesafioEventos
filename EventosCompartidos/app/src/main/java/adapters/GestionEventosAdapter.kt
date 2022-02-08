@@ -1,6 +1,7 @@
 package adapters
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.BDFirestore
+import com.example.eventoscompartidos.GestionEventoDetalle
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -57,6 +59,11 @@ class GestionEventosAdapter(
                 "${evento.numAsistentes} ${context.getString(R.string.strAsistentes)}"
             txtFechaHora.text = "${evento.fecha} - ${evento.hora}"
 
+            itemView.setOnClickListener {
+                val intent = Intent(context, GestionEventoDetalle::class.java)
+                intent.putExtra(context.getString(R.string.strEvento), Auxiliar.idEvento(evento))
+                context.startActivity(intent)
+            }
             itemView.setOnLongClickListener {
                 eliminar(evento, gestionEventosAdapter)
                 true
@@ -70,10 +77,14 @@ class GestionEventosAdapter(
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
                     BDFirestore.deleteEvento(Auxiliar.idEvento(evento))
                     gestionEventosAdapter.delete(evento)
-                    Toast.makeText(context, context.getString(R.string.strEventoEliminado), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.strEventoEliminado),
+                        Toast.LENGTH_SHORT
+                    ).show()
                     view.dismiss()
                 }
-                .setNegativeButton(context.getString(R.string.strCancelar)){view,_->
+                .setNegativeButton(context.getString(R.string.strCancelar)) { view, _ ->
                     view.dismiss()
                 }
                 .setCancelable(true)

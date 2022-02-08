@@ -19,12 +19,12 @@ object BDFirestore {
     val ACTIVADO__USUARIOS = "activado"
 
     val COL_EVENTOS = "eventos"
-    val NOMBRE__EVENTO = "nombre"
-    val FECHA__EVENTO = "fecha"
-    val HORA__EVENTO = "hora"
-    val ASISTENTES__EVENTO = "asistentes"
-    val LOC__EVENTO = "localizacion"
-    val PRESENTES__EVENTO = "presentes"
+    val NOMBRE__EVENTOS = "nombre"
+    val FECHA__EVENTOS = "fecha"
+    val HORA__EVENTOS = "hora"
+    val ASISTENTES__EVENTOS = "asistentes"
+    val PUNTO_REUNION__EVENTOS = "punto de reunión"
+    val PRESENTES__EVENTOS = "presentes"
 
     @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
@@ -124,10 +124,10 @@ object BDFirestore {
                 for (dc: DocumentChange in data.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val evento = EventoItem(
-                            dc.document.get(NOMBRE__EVENTO).toString(),
-                            dc.document.get(FECHA__EVENTO).toString(),
-                            dc.document.get(HORA__EVENTO).toString(),
-                            dc.document.get(ASISTENTES__EVENTO) as Long
+                            dc.document.get(NOMBRE__EVENTOS).toString(),
+                            dc.document.get(FECHA__EVENTOS).toString(),
+                            dc.document.get(HORA__EVENTOS).toString(),
+                            dc.document.get(ASISTENTES__EVENTOS) as Long
                         )
                         eventos.add(evento)
                     }
@@ -163,10 +163,10 @@ object BDFirestore {
 
     fun addEvento(ev: Evento) {
         val evento = hashMapOf(
-            NOMBRE__EVENTO to ev.nombre,
-            FECHA__EVENTO to ev.fecha,
-            HORA__EVENTO to ev.hora,
-            ASISTENTES__EVENTO to 0
+            NOMBRE__EVENTOS to ev.nombre,
+            FECHA__EVENTOS to ev.fecha,
+            HORA__EVENTOS to ev.hora,
+            ASISTENTES__EVENTOS to 0
         )
         db.collection(COL_EVENTOS).document(Auxiliar.idEvento(ev))
             .set(evento)
@@ -174,6 +174,30 @@ object BDFirestore {
 
     fun deleteEvento(idEvento: String) {
         db.collection(COL_EVENTOS).document(idEvento).delete()
+    }
+
+    fun getEvento(idEvento: String): Evento {
+        var evento: Evento? = null
+        runBlocking {
+            val job: Job = launch {
+                val data: DocumentSnapshot = queryEvento(idEvento)
+                    evento = Evento(
+                        data.get(NOMBRE__EVENTOS) as String,
+                        data.get(FECHA__EVENTOS) as String,
+                        data.get(HORA__EVENTOS) as String,
+                        data.get(PUNTO_REUNION__EVENTOS) as Localizacion?
+                    )
+            }
+            job.join()
+        }
+        return evento!!
+    }
+
+    private suspend fun queryEvento(idEvento: String): DocumentSnapshot {
+        return db.collection(COL_EVENTOS)
+            .document(idEvento)
+            .get()
+            .await()
     }
 
 }

@@ -41,6 +41,11 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+        rvGestionEventos.adapter = adaptador
+    }
 
     private fun crearEvento() {
         val creador = layoutInflater.inflate(R.layout.eventos_creater, null)
