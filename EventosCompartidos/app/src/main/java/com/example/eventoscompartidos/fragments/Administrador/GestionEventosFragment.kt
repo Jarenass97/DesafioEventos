@@ -13,8 +13,6 @@ import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.example.eventoscompartidos.R
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_gestion_eventos.*
 import model.Evento
 

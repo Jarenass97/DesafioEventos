@@ -181,12 +181,12 @@ object BDFirestore {
         runBlocking {
             val job: Job = launch {
                 val data: DocumentSnapshot = queryEvento(idEvento)
-                    evento = Evento(
-                        data.get(NOMBRE__EVENTOS) as String,
-                        data.get(FECHA__EVENTOS) as String,
-                        data.get(HORA__EVENTOS) as String,
-                        data.get(PUNTO_REUNION__EVENTOS) as Localizacion?
-                    )
+                evento = Evento(
+                    data.get(NOMBRE__EVENTOS) as String,
+                    data.get(FECHA__EVENTOS) as String,
+                    data.get(HORA__EVENTOS) as String,
+                    data.get(PUNTO_REUNION__EVENTOS) as Localizacion?
+                )
             }
             job.join()
         }
@@ -198,6 +198,48 @@ object BDFirestore {
             .document(idEvento)
             .get()
             .await()
+    }
+
+    fun changeNameEvent(evento: Evento, nuevoNombre: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.nombre = nuevoNombre
+                val data = it.data!!
+                data[NOMBRE__EVENTOS] = nuevoNombre
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
+    }
+
+    fun changeDateEvent(evento: Evento, nuevaFecha: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.fecha = nuevaFecha
+                val data = it.data!!
+                data[FECHA__EVENTOS] = nuevaFecha
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
+    }
+
+    fun changeHourEvent(evento: Evento, nuevaHora: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.hora = nuevaHora
+                val data = it.data!!
+                data[HORA__EVENTOS] = nuevaHora
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
     }
 
 }

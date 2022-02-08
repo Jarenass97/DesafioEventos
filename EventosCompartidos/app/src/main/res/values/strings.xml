@@ -33,4 +33,7 @@
     <string name="strCerrarSesion">Sign out</string>
     <string name="strMsgCerrarSesion">Do you want to log out and exit the system?</string>
     <string name="strEvento" translatable="false">Evento</string>
+    <string name="google_maps_key" translatable="false">AIzaSyBvzcIkG49SYz0QEJIjIrIgJmLintp0k70</string>
+    <string name="strMensajeSobreMapa">Check the meeting point of the event on the map</string>
+    <string name="strCambiarUbicacion">Change ubication</string>
 </resources>

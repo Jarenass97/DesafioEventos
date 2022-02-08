@@ -8,9 +8,11 @@ import android.text.format.DateFormat
 import android.widget.EditText
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
+import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
+import model.Evento
 import java.util.*
 
-class TimePickerFragment(val editText: EditText) : DialogFragment(), TimePickerDialog.OnTimeSetListener {
+class TimePickerFragment(val editText: EditText,val saved:Boolean=false,val evento: Evento?=null) : DialogFragment(), TimePickerDialog.OnTimeSetListener {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         // Use the current time as the default values for the picker
@@ -25,5 +27,6 @@ class TimePickerFragment(val editText: EditText) : DialogFragment(), TimePickerD
     @SuppressLint("SetTextI18n")
     override fun onTimeSet(view: TimePicker, hourOfDay: Int, minute: Int) {
         editText.setText("$hourOfDay:${String.format("%02d",minute)}")
+        if(saved)BDFirestore.changeHourEvent(evento!!, editText.text.toString())
     }
 }

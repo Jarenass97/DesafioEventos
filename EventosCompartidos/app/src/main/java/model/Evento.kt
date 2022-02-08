@@ -7,5 +7,8 @@ data class Evento(
     var fecha: String,
     var hora: String,
     var puntoReunion: Localizacion? = null,
-)
+) {
+    fun latitud(): Double = puntoReunion!!.latitud
+    fun longitud(): Double = puntoReunion!!.longitud
+}
 

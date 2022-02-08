@@ -29,4 +29,6 @@
     <string name="strEventoEliminado">Evento eliminado</string>
     <string name="strCerrarSesion">Cerrar sesión</string>
     <string name="strMsgCerrarSesion">¿Desea cerrar sesión y salir del sistema?</string>
+    <string name="strMensajeSobreMapa">Compruebe el punto de reunión del evento en el mapa</string>
+    <string name="strCambiarUbicacion">Cambiar ubicación</string>
 </resources>
