@@ -1,7 +1,7 @@
 package assistant
 
 import model.Evento
-import model.EventoGestion
+import model.EventoItem
 import model.Usuario
 
 object Auxiliar {
@@ -10,7 +10,7 @@ object Auxiliar {
     fun idEvento(evento: Evento): String =
         "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ","_")
 
-    fun idEvento(evento: EventoGestion): String =
+    fun idEvento(evento: EventoItem): String =
         "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ","_")
 
 }

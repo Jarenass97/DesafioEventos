@@ -8,16 +8,16 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import assistant.BDFirestore.ACTIVADO__USUARIOS
+import assistant.BDFirestore
 import assistant.BDFirestore.COL_USUARIOS
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import model.UsuarioGestion
+import model.UsuarioItem
 
 class GestionUsuariosAdapter(
     var context: AppCompatActivity,
-    var usuarios: ArrayList<UsuarioGestion>
+    var usuarios: ArrayList<UsuarioItem>
 ) :
     RecyclerView.Adapter<GestionUsuariosAdapter.ViewHolder>() {
 
@@ -42,11 +42,10 @@ class GestionUsuariosAdapter(
         RecyclerView.ViewHolder(view) {
         val imgIsActivated = view.findViewById<ImageView>(R.id.imgIsActivo)
         val txtUsuario = view.findViewById<TextView>(R.id.txtUsuarioGestion)
-        val db = Firebase.firestore
 
         @SuppressLint("NotifyDataSetChanged")
         fun bind(
-            user: UsuarioGestion,
+            user: UsuarioItem,
             context: AppCompatActivity,
             pos: Int,
             gestionUsuariosAdapter: GestionUsuariosAdapter
@@ -62,8 +61,8 @@ class GestionUsuariosAdapter(
             txtUsuario.text = user.email
             itemView.setOnClickListener(View.OnClickListener {
                 user.activado = !user.activado
-                db.collection(COL_USUARIOS).document(user.email)
-                    .update(ACTIVADO__USUARIOS, user.activado)
+                if(user.activado) BDFirestore.activarUsuario(user)
+                else BDFirestore.desactivarUsuario(user)
                 gestionUsuariosAdapter.notifyDataSetChanged()
             })
             itemView.setOnLongClickListener(View.OnLongClickListener {
@@ -72,13 +71,13 @@ class GestionUsuariosAdapter(
             })
         }
 
-        private fun eliminar(user: UsuarioGestion, gestionUsuariosAdapter: GestionUsuariosAdapter) {
+        private fun eliminar(user: UsuarioItem, gestionUsuariosAdapter: GestionUsuariosAdapter) {
             AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.strEliminar))
                 .setMessage(context.getString(R.string.strConfirmacionDeleteUser))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
                     gestionUsuariosAdapter.delUser(user)
-                    db.collection(COL_USUARIOS).document(user.email).delete()
+                    BDFirestore.deleteUsuario(user)
                     view.dismiss()
                 }
                 .setNegativeButton(context.getString(R.string.strCancelar)) { view, _ ->
@@ -91,7 +90,7 @@ class GestionUsuariosAdapter(
 
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun delUser(user: UsuarioGestion) {
+    private fun delUser(user: UsuarioItem) {
         usuarios.remove(user)
         notifyDataSetChanged()
     }

@@ -1,6 +1,6 @@
 package model
 
-data class EventoGestion(
+data class EventoItem(
     var nombre: String,
     var fecha: String,
     var hora: String,

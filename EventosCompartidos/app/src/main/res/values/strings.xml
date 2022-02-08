@@ -30,4 +30,6 @@
     <string name="strCrearEvento">Create event</string>
     <string name="strMensajeEliminarEvento">Are you sure you want to delete the event?</string>
     <string name="strEventoEliminado">Removed event</string>
+    <string name="strCerrarSesion">Sign out</string>
+    <string name="strMsgCerrarSesion">Do you want to log out and exit the system?</string>
 </resources>

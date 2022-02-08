@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import assistant.Auxiliar.usuario
+import assistant.BDFirestore
 import assistant.BDFirestore.ACTIVADO__USUARIOS
 import assistant.BDFirestore.COL_USUARIOS
 import assistant.BDFirestore.EMAIL__USUARIOS
@@ -22,12 +23,11 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import model.UsuarioGestion
+import model.UsuarioItem
 
 class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
 
     lateinit var adaptador: GestionUsuariosAdapter
-    val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,34 +41,8 @@ class GestionUsuariosFragment(val ventana: AppCompatActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGestionUsuarios.setHasFixedSize(true)
         rvGestionUsuarios.layoutManager = LinearLayoutManager(ventana)
-        adaptador = GestionUsuariosAdapter(ventana, getUsers())
+        adaptador = GestionUsuariosAdapter(ventana, BDFirestore.getUsers())
         rvGestionUsuarios.adapter = adaptador
     }
 
-    private fun getUsers(): ArrayList<UsuarioGestion> {
-        var usuarios = ArrayList<UsuarioGestion>(0)
-        runBlocking {
-            val job: Job = launch {
-                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
-                for (dc: DocumentChange in data.documentChanges) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        val user = UsuarioGestion(
-                            dc.document.get(EMAIL__USUARIOS).toString(),
-                            dc.document.get(ACTIVADO__USUARIOS) as Boolean
-                        )
-                        usuarios.add(user)
-                    }
-                }
-            }
-            job.join()
-        }
-        return usuarios
-    }
-
-    private suspend fun queryUsuarios(): Any {
-        return db.collection(COL_USUARIOS)
-            .whereNotEqualTo(EMAIL__USUARIOS, usuario.email)
-            .get()
-            .await()
-    }
 }

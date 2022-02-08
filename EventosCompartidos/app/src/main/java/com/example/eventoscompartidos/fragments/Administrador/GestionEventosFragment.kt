@@ -21,7 +21,6 @@ import model.Evento
 class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
 
     lateinit var adaptador: GestionEventosAdapter
-    val db = Firebase.firestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +63,6 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
                     BDFirestore.addEvento(ev)
                     adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
                     rvGestionEventos.adapter = adaptador
-                    // irMaps(ev)
                 } else {
                     Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)
                         .show()
@@ -91,35 +89,4 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
                 hora.text.isEmpty()
     }
 
-    /*private fun irMaps(evento: Evento) {
-        val intent = Intent(this, MapsActivity::class.java)
-        intent.putExtra("evento", evento)
-        intent.putExtra("opcion", OpcionMaps.CREAR)
-        startActivityForResult(intent, CODE_MAPS)
-    }*/
-
-    /*private fun getEvents(): ArrayList<EventoGestion> {
-        var eventos = ArrayList<EventoGestion>(0)
-        runBlocking {
-            val job: Job = launch {
-                val data: QuerySnapshot = queryEventos() as QuerySnapshot
-                for (dc: DocumentChange in data.documentChanges) {
-                    if (dc.type == DocumentChange.Type.ADDED) {
-                        val event = EventoGestion(
-                            dc.document.get(CamposBD.EMAIL__USUARIOS).toString()
-                        )
-                        eventos.add(event)
-                    }
-                }
-            }
-            job.join()
-        }
-        return eventos
-    }
-    private suspend fun queryEventos(): Any {
-        return db.collection(CamposBD.COL_USUARIOS)
-            .whereNotEqualTo(CamposBD.EMAIL__USUARIOS, Auxiliar.usuario.email)
-            .get()
-            .await()
-    }*/
 }

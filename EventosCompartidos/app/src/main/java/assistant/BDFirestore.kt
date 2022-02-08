@@ -2,6 +2,7 @@ package assistant
 
 import android.annotation.SuppressLint
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -9,8 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
-import model.Evento
-import model.EventoGestion
+import model.*
 
 object BDFirestore {
     val COL_USUARIOS = "usuarios"
@@ -29,14 +29,101 @@ object BDFirestore {
     @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
 
-    fun getEventos(): ArrayList<EventoGestion> {
-        var eventos = ArrayList<EventoGestion>(0)
+
+    //************************ USUARIOS ************************
+    fun getUsuario(email: String): Usuario? {
+        var usuario: Usuario? = null
+        runBlocking {
+            val job: Job = launch {
+                val data: DocumentSnapshot = queryUser(email)
+                if (data.exists()) {
+                    usuario = Usuario(
+                        data.get(EMAIL__USUARIOS) as String,
+                        Rol.valueOf(data.get(ROL__USUARIOS) as String),
+                        data.get(ACTIVADO__USUARIOS) as Boolean
+                    )
+                }
+            }
+            job.join()
+        }
+        return usuario
+    }
+
+    private suspend fun queryUser(email: String): DocumentSnapshot {
+        return db.collection(COL_USUARIOS)
+            .document(email)
+            .get()
+            .await()
+    }
+
+    fun getUsers(): ArrayList<UsuarioItem> {
+        var usuarios = ArrayList<UsuarioItem>(0)
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuariosExceptMe() as QuerySnapshot
+                for (dc: DocumentChange in data.documentChanges) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        val user = UsuarioItem(
+                            dc.document.get(EMAIL__USUARIOS).toString(),
+                            dc.document.get(ACTIVADO__USUARIOS) as Boolean
+                        )
+                        usuarios.add(user)
+                    }
+                }
+            }
+            job.join()
+        }
+        return usuarios
+    }
+
+    private suspend fun queryUsuariosExceptMe(): Any {
+        return db.collection(COL_USUARIOS)
+            .whereNotEqualTo(EMAIL__USUARIOS, Auxiliar.usuario.email)
+            .get()
+            .await()
+    }
+
+    fun activarUsuario(user: UsuarioItem) {
+        db.collection(COL_USUARIOS).document(user.email)
+            .update(ACTIVADO__USUARIOS, true)
+    }
+
+    fun desactivarUsuario(user: UsuarioItem) {
+        db.collection(COL_USUARIOS).document(user.email)
+            .update(ACTIVADO__USUARIOS, false)
+    }
+
+    fun deleteUsuario(user: UsuarioItem) {
+        db.collection(COL_USUARIOS).document(user.email).delete()
+    }
+
+    fun usuariosReg(): Boolean {
+        var reg = false
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
+                reg = data.documentChanges.size > 0
+            }
+            job.join()
+        }
+        return reg
+    }
+
+    private suspend fun queryUsuarios(): Any {
+        return db.collection(COL_USUARIOS)
+            .get()
+            .await()
+    }
+
+    //************************ EVENTOS ************************
+    fun getEventos(): ArrayList<EventoItem> {
+        var eventos = ArrayList<EventoItem>(0)
         runBlocking {
             val job: Job = launch {
                 val data: QuerySnapshot = queryEventos() as QuerySnapshot
                 for (dc: DocumentChange in data.documentChanges) {
                     if (dc.type == DocumentChange.Type.ADDED) {
-                        val evento = EventoGestion(
+                        val evento = EventoItem(
                             dc.document.get(NOMBRE__EVENTO).toString(),
                             dc.document.get(FECHA__EVENTO).toString(),
                             dc.document.get(HORA__EVENTO).toString(),
@@ -57,10 +144,10 @@ object BDFirestore {
             .await()
     }
 
-    private fun ordenarEventos(eventos: ArrayList<EventoGestion>): ArrayList<EventoGestion> {
+    private fun ordenarEventos(eventos: ArrayList<EventoItem>): ArrayList<EventoItem> {
         val eventsSort = eventos.sortedBy { it.hora }.sortedBy {
             fechaLimpia(it.fecha)
-        }.toMutableList() as ArrayList<EventoGestion>
+        }.toMutableList() as ArrayList<EventoItem>
         return eventsSort
     }
 
@@ -88,4 +175,5 @@ object BDFirestore {
     fun deleteEvento(idEvento: String) {
         db.collection(COL_EVENTOS).document(idEvento).delete()
     }
+
 }

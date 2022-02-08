@@ -27,4 +27,6 @@
     <string name="strCrearEvento">Crear evento</string>
     <string name="strMensajeEliminarEvento">¿Está seguro de eliminar el evento?</string>
     <string name="strEventoEliminado">Evento eliminado</string>
+    <string name="strCerrarSesion">Cerrar sesión</string>
+    <string name="strMsgCerrarSesion">¿Desea cerrar sesión y salir del sistema?</string>
 </resources>

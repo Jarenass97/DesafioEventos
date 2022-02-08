@@ -14,12 +14,11 @@ import assistant.BDFirestore
 import com.example.eventoscompartidos.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import model.Evento
-import model.EventoGestion
+import model.EventoItem
 
 class GestionEventosAdapter(
     var context: AppCompatActivity,
-    var eventos: ArrayList<EventoGestion>
+    var eventos: ArrayList<EventoItem>
 ) :
     RecyclerView.Adapter<GestionEventosAdapter.ViewHolder>() {
 
@@ -45,11 +44,10 @@ class GestionEventosAdapter(
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreEventoGestion)
         val txtNumAsistentes = view.findViewById<TextView>(R.id.txtNumAsistentesGestion)
         val txtFechaHora = view.findViewById<TextView>(R.id.txtFechaEventoGestion)
-        val db = Firebase.firestore
 
         @SuppressLint("SetTextI18n")
         fun bind(
-            evento: EventoGestion,
+            evento: EventoItem,
             context: AppCompatActivity,
             pos: Int,
             gestionEventosAdapter: GestionEventosAdapter
@@ -65,7 +63,7 @@ class GestionEventosAdapter(
             }
         }
 
-        private fun eliminar(evento: EventoGestion, gestionEventosAdapter: GestionEventosAdapter) {
+        private fun eliminar(evento: EventoItem, gestionEventosAdapter: GestionEventosAdapter) {
             AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.strEliminar))
                 .setMessage(context.getString(R.string.strMensajeEliminarEvento))
@@ -85,7 +83,7 @@ class GestionEventosAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun delete(evento: EventoGestion) {
+    private fun delete(evento: EventoItem) {
         eventos.remove(evento)
         notifyDataSetChanged()
     }

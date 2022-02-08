@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.fragments.Administrador.GestionEventosFragment
@@ -65,11 +66,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        val prefs: SharedPreferences.Editor? =
-            getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE).edit()
-        prefs?.clear() //Al cerrar sesión borramos los datos
-        prefs?.apply()
-        FirebaseAuth.getInstance().signOut()
+        cerrarSesion()
+    }
+
+    private fun cerrarSesion() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strCerrarSesion))
+            .setMessage(getString(R.string.strMsgCerrarSesion))
+            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                super.onBackPressed()
+                val prefs: SharedPreferences.Editor? =
+                    getSharedPreferences(
+                        getString(R.string.prefs_file),
+                        Context.MODE_PRIVATE
+                    ).edit()
+                prefs?.clear()
+                prefs?.apply()
+                FirebaseAuth.getInstance().signOut()
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                view.dismiss()
+            }
+            .setCancelable(true)
+            .create().show()
     }
 }
