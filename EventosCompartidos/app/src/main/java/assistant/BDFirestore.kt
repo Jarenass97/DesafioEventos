@@ -1,6 +1,7 @@
 package assistant
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -13,11 +14,12 @@ import kotlinx.coroutines.tasks.await
 import model.*
 
 object BDFirestore {
+    val CARPETA_IMAGENES = "imgsUsuarios"
     val COL_USUARIOS = "usuarios"
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
     val ACTIVADO__USUARIOS = "activado"
-    val IMAGEN__USUARIOS  = "imagen"
+    val IMAGEN__USUARIOS = "imagen"
 
     val COL_EVENTOS = "eventos"
     val NOMBRE__EVENTOS = "nombre"
@@ -128,7 +130,7 @@ object BDFirestore {
                             dc.document.get(NOMBRE__EVENTOS).toString(),
                             dc.document.get(FECHA__EVENTOS).toString(),
                             dc.document.get(HORA__EVENTOS).toString(),
-                            dc.document.get(ASISTENTES__EVENTOS) as ArrayList<String>
+                            dc.document.get(ASISTENTES__EVENTOS) as ArrayList<Asistente>
                         )
                         eventos.add(evento)
                     }
@@ -182,12 +184,18 @@ object BDFirestore {
         runBlocking {
             val job: Job = launch {
                 val data: DocumentSnapshot = queryEvento(idEvento)
+                val listaAsistentes = data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>
+                val keys = Asistente.getCampos()
+                val asistentes = ArrayList<Asistente>(0)
+                for (a in listaAsistentes) {
+                    asistentes.add(Asistente(a[keys[0]].toString(), a[keys[1]].toString()))
+                }
                 evento = Evento(
                     data.get(NOMBRE__EVENTOS) as String,
                     data.get(FECHA__EVENTOS) as String,
                     data.get(HORA__EVENTOS) as String,
                     data.get(PUNTO_REUNION__EVENTOS) as Localizacion?,
-                    data.get(ASISTENTES__EVENTOS) as ArrayList<String>
+                    asistentes
                 )
             }
             job.join()
@@ -244,7 +252,7 @@ object BDFirestore {
             }
     }
 
-    fun actualizarAsistentesEvento(evento: Evento, asistentes: ArrayList<String>) {
+    fun actualizarAsistentesEvento(evento: Evento, asistentes: ArrayList<Asistente>) {
         db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento))
             .update(ASISTENTES__EVENTOS, asistentes)
     }

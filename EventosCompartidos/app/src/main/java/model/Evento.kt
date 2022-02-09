@@ -9,11 +9,11 @@ data class Evento(
     var fecha: String,
     var hora: String,
     var puntoReunion: Localizacion? = null,
-    var asistentes: ArrayList<String> = ArrayList(0)
+    var asistentes: ArrayList<Asistente> = ArrayList(0)
 ) {
     fun localizacionPuntoReunion(): LatLng = LatLng(puntoReunion!!.latitud, puntoReunion!!.longitud)
-    fun addAsistente(emailAsistente: String) {
-        asistentes.add(emailAsistente)
+    fun addAsistente(asistente: Asistente) {
+        asistentes.add(asistente)
     }
 }
 

@@ -13,11 +13,14 @@ import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.BDFirestore
 import com.example.eventoscompartidos.R
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import model.Asistente
 import model.Evento
 
 class UsuariosAdapter(
     var context: AppCompatActivity,
-    var asistentes: ArrayList<String>,
+    var asistentes: ArrayList<Asistente>,
     val evento: Evento
 ) :
     RecyclerView.Adapter<UsuariosAdapter.ViewHolder>() {
@@ -43,25 +46,33 @@ class UsuariosAdapter(
         RecyclerView.ViewHolder(view) {
         val imgUsuario = view.findViewById<ImageView>(R.id.imgUsuarioItem)
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioItem)
+        val storageRef = Firebase.storage.reference
 
         @SuppressLint("SetTextI18n")
         fun bind(
-            asistente: String,
+            asistente: Asistente,
             context: AppCompatActivity,
             pos: Int,
             usuariosAdapter: UsuariosAdapter
         ) {
-            txtNombre.text = asistente
+            cargarImagen(asistente)
+            txtNombre.text = asistente.email
             itemView.setOnLongClickListener {
                 expulsar(asistente, usuariosAdapter)
                 true
             }
         }
 
-        private fun expulsar(asistente: String, usuariosAdapter: UsuariosAdapter) {
+        private fun cargarImagen(asistente: Asistente) {
+            val imgRef = storageRef.child("${BDFirestore.CARPETA_IMAGENES}/${asistente.email}.jpg")
+            imgRef.getBytes(1024 * 1024)
+                .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
+        }
+
+        private fun expulsar(asistente: Asistente, usuariosAdapter: UsuariosAdapter) {
             AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.strExpulsar))
-                .setMessage(context.getString(R.string.strMsgExpulsarUsuario, asistente))
+                .setMessage(context.getString(R.string.strMsgExpulsarUsuario, asistente.email))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
                     usuariosAdapter.delete(asistente)
                     Toast.makeText(
@@ -81,7 +92,7 @@ class UsuariosAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun delete(asistente: String) {
+    private fun delete(asistente: Asistente) {
         asistentes.remove(asistente)
         BDFirestore.actualizarAsistentesEvento(evento, asistentes)
         notifyDataSetChanged()

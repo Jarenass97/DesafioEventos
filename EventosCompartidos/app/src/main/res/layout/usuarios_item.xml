@@ -24,6 +24,7 @@
             android:id="@+id/imgUsuarioItem"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/yellow_light"
             android:scaleType="centerCrop"
             app:srcCompat="@drawable/ic_usuario" />
     </androidx.cardview.widget.CardView>
