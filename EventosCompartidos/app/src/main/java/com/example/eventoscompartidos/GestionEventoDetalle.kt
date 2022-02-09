@@ -1,5 +1,6 @@
 package com.example.eventoscompartidos
 
+import adapters.UsuariosAdapter
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,6 +17,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import assistant.Auxiliar
 import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -25,6 +28,8 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
 import model.Evento
 
@@ -34,6 +39,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     lateinit var map: GoogleMap
     private val LOCATION_REQUEST_CODE: Int = 0
     lateinit var myUbication: LatLng
+    lateinit var adaptadorAsistentes: UsuariosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gestion_evento_detalle)
@@ -50,6 +56,10 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     private fun cargarDatos() {
         edFechaEventoDetalle.setText(evento.fecha)
         edHoraEventoDetalle.setText(evento.hora)
+        rvAsistentes.setHasFixedSize(true)
+        rvAsistentes.layoutManager = LinearLayoutManager(this)
+        adaptadorAsistentes = UsuariosAdapter(this, evento.asistentes, evento)
+        rvAsistentes.adapter = adaptadorAsistentes
         edFechaEventoDetalle.setOnClickListener {
             showDatePickerDialog(edFechaEventoDetalle)
         }
@@ -59,7 +69,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     }
 
     private fun showTimePickerDialog(hora: EditText) {
-        TimePickerFragment(hora,true,evento).show(supportFragmentManager, "timePicker")
+        TimePickerFragment(hora, true, evento).show(supportFragmentManager, "timePicker")
     }
 
     private fun showDatePickerDialog(edFecha: EditText) {
@@ -112,7 +122,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         enableMyLocation()
         obtenerMiUbi()
         if (evento.puntoReunion != null) {
-            val pos = LatLng(evento.latitud(), evento.longitud())
+            val pos = evento.localizacionPuntoReunion()
             map.addMarker(
                 MarkerOptions().position(pos).title(evento.nombre)
                     .snippet("${evento.fecha} ${evento.hora}")

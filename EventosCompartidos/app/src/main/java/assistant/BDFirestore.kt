@@ -17,6 +17,7 @@ object BDFirestore {
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
     val ACTIVADO__USUARIOS = "activado"
+    val IMAGEN__USUARIOS  = "imagen"
 
     val COL_EVENTOS = "eventos"
     val NOMBRE__EVENTOS = "nombre"
@@ -127,7 +128,7 @@ object BDFirestore {
                             dc.document.get(NOMBRE__EVENTOS).toString(),
                             dc.document.get(FECHA__EVENTOS).toString(),
                             dc.document.get(HORA__EVENTOS).toString(),
-                            dc.document.get(ASISTENTES__EVENTOS) as Long
+                            dc.document.get(ASISTENTES__EVENTOS) as ArrayList<String>
                         )
                         eventos.add(evento)
                     }
@@ -166,7 +167,7 @@ object BDFirestore {
             NOMBRE__EVENTOS to ev.nombre,
             FECHA__EVENTOS to ev.fecha,
             HORA__EVENTOS to ev.hora,
-            ASISTENTES__EVENTOS to 0
+            ASISTENTES__EVENTOS to ev.asistentes
         )
         db.collection(COL_EVENTOS).document(Auxiliar.idEvento(ev))
             .set(evento)
@@ -185,7 +186,8 @@ object BDFirestore {
                     data.get(NOMBRE__EVENTOS) as String,
                     data.get(FECHA__EVENTOS) as String,
                     data.get(HORA__EVENTOS) as String,
-                    data.get(PUNTO_REUNION__EVENTOS) as Localizacion?
+                    data.get(PUNTO_REUNION__EVENTOS) as Localizacion?,
+                    data.get(ASISTENTES__EVENTOS) as ArrayList<String>
                 )
             }
             job.join()
@@ -240,6 +242,11 @@ object BDFirestore {
                         db.collection(COL_EVENTOS).document(id).delete()
                     }
             }
+    }
+
+    fun actualizarAsistentesEvento(evento: Evento, asistentes: ArrayList<String>) {
+        db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento))
+            .update(ASISTENTES__EVENTOS, asistentes)
     }
 
 }

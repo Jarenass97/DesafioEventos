@@ -4,5 +4,7 @@ data class EventoItem(
     var nombre: String,
     var fecha: String,
     var hora: String,
-    var numAsistentes: Long
-)
+    var asistentes: ArrayList<String>
+) {
+    fun numAsistentes(): Int = asistentes.size
+}

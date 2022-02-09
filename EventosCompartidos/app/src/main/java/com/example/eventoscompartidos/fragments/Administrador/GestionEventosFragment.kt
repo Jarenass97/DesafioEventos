@@ -1,6 +1,6 @@
 package com.example.eventoscompartidos.fragments.Administrador
 
-import adapters.GestionEventosAdapter
+import adapters.EventosAdapter
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
@@ -18,7 +18,7 @@ import model.Evento
 
 class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
 
-    lateinit var adaptador: GestionEventosAdapter
+    lateinit var adaptador: EventosAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +32,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGestionEventos.setHasFixedSize(true)
         rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
-        adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+        adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
         rvGestionEventos.adapter = adaptador
         btnAddEvent.setOnClickListener {
             crearEvento()
@@ -41,7 +41,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+        adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
         rvGestionEventos.adapter = adaptador
     }
 
@@ -64,7 +64,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
                             hora.text.toString()
                         )
                     BDFirestore.addEvento(ev)
-                    adaptador = GestionEventosAdapter(ventana, BDFirestore.getEventos())
+                    adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
                     rvGestionEventos.adapter = adaptador
                 } else {
                     Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)

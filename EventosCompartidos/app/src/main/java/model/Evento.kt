@@ -1,5 +1,7 @@
 package model
 
+import assistant.BDFirestore
+import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
 
 data class Evento(
@@ -7,8 +9,11 @@ data class Evento(
     var fecha: String,
     var hora: String,
     var puntoReunion: Localizacion? = null,
+    var asistentes: ArrayList<String> = ArrayList(0)
 ) {
-    fun latitud(): Double = puntoReunion!!.latitud
-    fun longitud(): Double = puntoReunion!!.longitud
+    fun localizacionPuntoReunion(): LatLng = LatLng(puntoReunion!!.latitud, puntoReunion!!.longitud)
+    fun addAsistente(emailAsistente: String) {
+        asistentes.add(emailAsistente)
+    }
 }
 

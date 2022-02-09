@@ -12,6 +12,7 @@ import assistant.BDFirestore
 import assistant.BDFirestore.ACTIVADO__USUARIOS
 import assistant.BDFirestore.COL_USUARIOS
 import assistant.BDFirestore.EMAIL__USUARIOS
+import assistant.BDFirestore.IMAGEN__USUARIOS
 import assistant.BDFirestore.ROL__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
