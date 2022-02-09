@@ -38,4 +38,8 @@
     <string name="strCambiarUbicacion">Change ubication</string>
     <string name="strMsgExpulsarUsuario">Are you sure you want to expel %s from the event?</string>
     <string name="strExpulsar">Expel</string>
+    <string name="strUsuarios">users</string>
+    <string name="strAlertaUsuarioNoSeleccionado">You have not selected any user</string>
+    <string name="strSinUsuariosDisponibles">There are no users available for this event</string>
+    <string name="strInvitacionCorrecta">%s has been invited</string>
 </resources>

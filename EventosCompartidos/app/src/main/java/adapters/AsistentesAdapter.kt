@@ -18,12 +18,12 @@ import com.google.firebase.storage.ktx.storage
 import model.Asistente
 import model.Evento
 
-class UsuariosAdapter(
+class AsistentesAdapter(
     var context: AppCompatActivity,
     var asistentes: ArrayList<Asistente>,
     val evento: Evento
 ) :
-    RecyclerView.Adapter<UsuariosAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AsistentesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -53,12 +53,12 @@ class UsuariosAdapter(
             asistente: Asistente,
             context: AppCompatActivity,
             pos: Int,
-            usuariosAdapter: UsuariosAdapter
+            asistentesAdapter: AsistentesAdapter
         ) {
             cargarImagen(asistente)
             txtNombre.text = asistente.email
             itemView.setOnLongClickListener {
-                expulsar(asistente, usuariosAdapter)
+                expulsar(asistente, asistentesAdapter)
                 true
             }
         }
@@ -69,12 +69,12 @@ class UsuariosAdapter(
                 .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
         }
 
-        private fun expulsar(asistente: Asistente, usuariosAdapter: UsuariosAdapter) {
+        private fun expulsar(asistente: Asistente, asistentesAdapter: AsistentesAdapter) {
             AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.strExpulsar))
                 .setMessage(context.getString(R.string.strMsgExpulsarUsuario, asistente.email))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
-                    usuariosAdapter.delete(asistente)
+                    asistentesAdapter.delete(asistente)
                     Toast.makeText(
                         context,
                         context.getString(R.string.strEventoEliminado),

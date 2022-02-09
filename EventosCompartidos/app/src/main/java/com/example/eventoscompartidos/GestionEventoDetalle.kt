@@ -1,6 +1,7 @@
 package com.example.eventoscompartidos
 
-import adapters.UsuariosAdapter
+import adapters.AsistentesAdapter
+import adapters.UsuariosAinvitarAdapter
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,7 +10,6 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,7 +19,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import assistant.Auxiliar
+import androidx.recyclerview.widget.RecyclerView
 import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -29,8 +29,6 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
 import model.Asistente
 import model.Evento
@@ -41,7 +39,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     lateinit var map: GoogleMap
     private val LOCATION_REQUEST_CODE: Int = 0
     lateinit var myUbication: LatLng
-    lateinit var adaptadorAsistentes: UsuariosAdapter
+    lateinit var adaptadorAsistentes: AsistentesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_gestion_evento_detalle)
@@ -53,6 +51,54 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
         cargarMapa()
         cargarDatos()
+        edFechaEventoDetalle.setOnClickListener {
+            showDatePickerDialog(edFechaEventoDetalle)
+        }
+        edHoraEventoDetalle.setOnClickListener {
+            showTimePickerDialog(edHoraEventoDetalle)
+        }
+        btnInvitarUsuario.setOnClickListener {
+            mostrarUsuarios()
+        }
+    }
+
+    private fun mostrarUsuarios() {
+        val dialog = layoutInflater.inflate(R.layout.layout_recycler, null)
+        val recycler = dialog.findViewById<RecyclerView>(R.id.recyclerView)
+        val adapter = cargarRecycler(recycler)
+        if (adapter.itemCount > 0) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.strUsuarios))
+                .setView(dialog)
+                .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                    val emailUsuario = adapter.getSelected()
+                    if (emailUsuario.isNotEmpty()) {
+                        evento.addAsistente(Asistente(emailUsuario))
+                        Toast.makeText(
+                            this,
+                            getString(R.string.strInvitacionCorrecta, emailUsuario),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        adaptadorAsistentes.notifyDataSetChanged()
+                    } else Toast.makeText(
+                        this,
+                        getString(R.string.strAlertaUsuarioNoSeleccionado),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    view.dismiss()
+                }
+                .setCancelable(true).create().show()
+        } else
+            Toast.makeText(this, getString(R.string.strSinUsuariosDisponibles), Toast.LENGTH_SHORT)
+                .show()
+    }
+
+    private fun cargarRecycler(recycler: RecyclerView): UsuariosAinvitarAdapter {
+        recycler.setHasFixedSize(true)
+        recycler.layoutManager = LinearLayoutManager(this)
+        val adaptador = UsuariosAinvitarAdapter(this, BDFirestore.getUsuariosDisponibles(evento))
+        recycler.adapter = adaptador
+        return adaptador
     }
 
     private fun cargarDatos() {
@@ -60,14 +106,8 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         edHoraEventoDetalle.setText(evento.hora)
         rvAsistentes.setHasFixedSize(true)
         rvAsistentes.layoutManager = LinearLayoutManager(this)
-        adaptadorAsistentes = UsuariosAdapter(this, evento.asistentes, evento)
+        adaptadorAsistentes = AsistentesAdapter(this, evento.asistentes, evento)
         rvAsistentes.adapter = adaptadorAsistentes
-        edFechaEventoDetalle.setOnClickListener {
-            showDatePickerDialog(edFechaEventoDetalle)
-        }
-        edHoraEventoDetalle.setOnClickListener {
-            showTimePickerDialog(edHoraEventoDetalle)
-        }
     }
 
     private fun showTimePickerDialog(hora: EditText) {

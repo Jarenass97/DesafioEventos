@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".GestionEventoDetalle">
 
+    <ImageButton
+        android:id="@+id/btnInvitarUsuario"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="@+id/textView2"
+        app:layout_constraintEnd_toEndOf="@+id/rvAsistentes"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="@+id/textView2"
+        app:srcCompat="@drawable/ic_add" />
+
     <TextView
         android:id="@+id/txtMensajeUbicacionEventoDetalle"
         style="@style/textViews"

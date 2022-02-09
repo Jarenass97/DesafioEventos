@@ -118,6 +118,32 @@ object BDFirestore {
             .await()
     }
 
+    fun getUsuariosDisponibles(evento: Evento): ArrayList<String> {
+        var usuarios = ArrayList<String>(0)
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuariosDisponibles(evento) as QuerySnapshot
+                for (dc: DocumentChange in data.documentChanges) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        usuarios.add(dc.document.get(EMAIL__USUARIOS).toString())
+                    }
+                }
+            }
+            job.join()
+        }
+        return usuarios
+    }
+
+    private suspend fun queryUsuariosDisponibles(evento: Evento): Any {
+        return if (evento.tieneAsistentes()) db.collection(COL_USUARIOS)
+            .whereNotIn(EMAIL__USUARIOS, evento.listaAsistentes())
+            .get()
+            .await()
+        else db.collection(COL_USUARIOS)
+            .get()
+            .await()
+    }
+
     //************************ EVENTOS ************************
     fun getEventos(): ArrayList<EventoItem> {
         var eventos = ArrayList<EventoItem>(0)

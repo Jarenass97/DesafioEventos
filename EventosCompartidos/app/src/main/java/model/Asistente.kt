@@ -1,7 +1,7 @@
 package model
 
 
-data class Asistente(var email: String, var horaLlegada: String = ""){
+data class Asistente(var email: String, var horaLlegada: String? = null){
     companion object {
         fun getCampos(): ArrayList<String> {
             val campos = ArrayList<String>(0)

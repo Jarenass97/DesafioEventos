@@ -2,7 +2,6 @@ package model
 
 import assistant.BDFirestore
 import com.google.android.gms.maps.model.LatLng
-import java.io.Serializable
 
 data class Evento(
     var nombre: String,
@@ -14,6 +13,15 @@ data class Evento(
     fun localizacionPuntoReunion(): LatLng = LatLng(puntoReunion!!.latitud, puntoReunion!!.longitud)
     fun addAsistente(asistente: Asistente) {
         asistentes.add(asistente)
+        BDFirestore.actualizarAsistentesEvento(this, asistentes)
     }
+
+    fun listaAsistentes(): ArrayList<String> {
+        val lista = ArrayList<String>(0)
+        for (a in asistentes) lista.add(a.email)
+        return lista
+    }
+
+    fun tieneAsistentes(): Boolean = asistentes.size > 0
 }
 
