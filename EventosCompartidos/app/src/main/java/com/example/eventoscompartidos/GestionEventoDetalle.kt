@@ -4,7 +4,9 @@ import adapters.AsistentesAdapter
 import adapters.UsuariosAinvitarAdapter
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
@@ -20,6 +22,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import assistant.Auxiliar
 import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -32,6 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
 import model.Asistente
 import model.Evento
+import model.Localizacion
 
 class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     GoogleMap.OnMyLocationChangeListener {
@@ -169,7 +173,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                 MarkerOptions().position(pos).title(evento.nombre)
                     .snippet("${evento.fecha} ${evento.hora}")
             )
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 16f))
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(pos, 15f))
         } else {
             map.moveCamera(
                 CameraUpdateFactory.newLatLngZoom(
@@ -243,7 +247,8 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     }
 
     fun cambiarUbicacion(view: View) {
-        Toast.makeText(this, "Abriendo mapa a lo grande", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, MapsActivity::class.java)
+        startActivityForResult(intent, Auxiliar.CODE_CHANGE_UBICATION)
     }
 
     override fun onMyLocationChange(ubication: Location) {
@@ -252,5 +257,20 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
             CameraUpdateFactory.newLatLngZoom(myUbication, 14f),
             2000, null
         )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when (requestCode) {
+            Auxiliar.CODE_CHANGE_UBICATION -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val punto = data?.extras?.get("result") as Localizacion
+                    evento.puntoReunion = punto
+                    BDFirestore.establecerPuntoReunion(punto, evento)
+                    map.clear()
+                    cargarMapa()
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

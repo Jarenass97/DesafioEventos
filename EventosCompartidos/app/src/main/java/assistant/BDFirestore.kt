@@ -1,7 +1,7 @@
 package assistant
 
 import android.annotation.SuppressLint
-import android.util.Log
+import assistant.Auxiliar.idEvento
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -14,6 +14,11 @@ import kotlinx.coroutines.tasks.await
 import model.*
 
 object BDFirestore {
+
+    @SuppressLint("StaticFieldLeak")
+    private val db = Firebase.firestore
+
+    //************************ USUARIOS ************************
     val CARPETA_IMAGENES = "imgsUsuarios"
     val COL_USUARIOS = "usuarios"
     val EMAIL__USUARIOS = "email"
@@ -21,19 +26,6 @@ object BDFirestore {
     val ACTIVADO__USUARIOS = "activado"
     val IMAGEN__USUARIOS = "imagen"
 
-    val COL_EVENTOS = "eventos"
-    val NOMBRE__EVENTOS = "nombre"
-    val FECHA__EVENTOS = "fecha"
-    val HORA__EVENTOS = "hora"
-    val ASISTENTES__EVENTOS = "asistentes"
-    val PUNTO_REUNION__EVENTOS = "punto de reunión"
-    val PRESENTES__EVENTOS = "presentes"
-
-    @SuppressLint("StaticFieldLeak")
-    private val db = Firebase.firestore
-
-
-    //************************ USUARIOS ************************
     fun getUsuario(email: String): Usuario? {
         var usuario: Usuario? = null
         runBlocking {
@@ -145,6 +137,14 @@ object BDFirestore {
     }
 
     //************************ EVENTOS ************************
+    val COL_EVENTOS = "eventos"
+    val NOMBRE__EVENTOS = "nombre"
+    val FECHA__EVENTOS = "fecha"
+    val HORA__EVENTOS = "hora"
+    val ASISTENTES__EVENTOS = "asistentes"
+    val PUNTO_REUNION__EVENTOS = "punto de reunión"
+    val PRESENTES__EVENTOS = "presentes"
+
     fun getEventos(): ArrayList<EventoItem> {
         var eventos = ArrayList<EventoItem>(0)
         runBlocking {
@@ -210,23 +210,32 @@ object BDFirestore {
         runBlocking {
             val job: Job = launch {
                 val data: DocumentSnapshot = queryEvento(idEvento)
-                val listaAsistentes = data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>
-                val keys = Asistente.getCampos()
-                val asistentes = ArrayList<Asistente>(0)
-                for (a in listaAsistentes) {
-                    asistentes.add(Asistente(a[keys[0]].toString(), a[keys[1]].toString()))
-                }
                 evento = Evento(
                     data.get(NOMBRE__EVENTOS) as String,
                     data.get(FECHA__EVENTOS) as String,
                     data.get(HORA__EVENTOS) as String,
-                    data.get(PUNTO_REUNION__EVENTOS) as Localizacion?,
-                    asistentes
+                    destriparPuntoReunion(data.get(PUNTO_REUNION__EVENTOS) as HashMap<String, *>?),
+                    destriparAsistentes(data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>)
                 )
             }
             job.join()
         }
         return evento!!
+    }
+
+    private fun destriparPuntoReunion(loc: HashMap<String, *>?): Localizacion? {
+        val keys = Localizacion.getCampos()
+        return if (loc != null) Localizacion(loc[keys[0]] as Double, loc[keys[1]] as Double)
+        else null
+    }
+
+    private fun destriparAsistentes(data: ArrayList<HashMap<String, *>>): ArrayList<Asistente> {
+        val keys = Asistente.getCampos()
+        val asistentes = ArrayList<Asistente>(0)
+        for (a in data) {
+            asistentes.add(Asistente(a[keys[0]].toString(), a[keys[1]].toString()))
+        }
+        return asistentes
     }
 
     private suspend fun queryEvento(idEvento: String): DocumentSnapshot {
@@ -279,8 +288,13 @@ object BDFirestore {
     }
 
     fun actualizarAsistentesEvento(evento: Evento, asistentes: ArrayList<Asistente>) {
-        db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento))
+        db.collection(COL_EVENTOS).document(idEvento(evento))
             .update(ASISTENTES__EVENTOS, asistentes)
+    }
+
+    fun establecerPuntoReunion(punto: Localizacion, evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(PUNTO_REUNION__EVENTOS, punto)
     }
 
 }

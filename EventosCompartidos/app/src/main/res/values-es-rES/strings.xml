@@ -37,4 +37,8 @@
     <string name="strAlertaUsuarioNoSeleccionado">No ha seleccionado ningún usuario</string>
     <string name="strSinUsuariosDisponibles">No hay usuarios disponibles para este evento</string>
     <string name="strInvitacionCorrecta">%s ha sido invitado</string>
+    <string name="strDireccion">Dirección</string>
+    <string name="strConfirmar">Confirmar</string>
+    <string name="strConfirmarPuntoReunion">¿Está seguro de establecer el evento en este lugar?</string>
+    <string name="strDirNoEncontrada">No se encuentra la dirección indicada</string>
 </resources>

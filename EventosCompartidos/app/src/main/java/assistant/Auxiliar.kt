@@ -8,6 +8,9 @@ import model.Usuario
 import java.io.ByteArrayOutputStream
 
 object Auxiliar {
+    val CODE_CHANGE_UBICATION=1
+    val LOCATION_REQUEST_CODE=0
+
     lateinit var usuario: Usuario
 
     fun idEvento(evento: Evento): String =
@@ -25,4 +28,5 @@ object Auxiliar {
     fun getBitmap(image: ByteArray): Bitmap? {
         return BitmapFactory.decodeByteArray(image, 0, image.size)
     }
+
 }
