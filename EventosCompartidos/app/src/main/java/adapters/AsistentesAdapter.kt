@@ -1,10 +1,10 @@
 package adapters
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -12,71 +12,69 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.BDFirestore
-import com.example.eventoscompartidos.GestionEventoDetalle
 import com.example.eventoscompartidos.R
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import model.EventoItem
+import com.google.firebase.storage.ktx.storage
+import model.Asistente
+import model.Evento
 
-class GestionEventosAdapter(
+class AsistentesAdapter(
     var context: AppCompatActivity,
-    var eventos: ArrayList<EventoItem>
+    var asistentes: ArrayList<Asistente>,
+    val evento: Evento
 ) :
-    RecyclerView.Adapter<GestionEventosAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AsistentesAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return ViewHolder(
-            layoutInflater.inflate(R.layout.gestion_eventos_item, parent, false),
+            layoutInflater.inflate(R.layout.usuarios_item, parent, false),
             context
         )
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = eventos[position]
+        val item = asistentes[position]
         holder.bind(item, context, position, this)
     }
 
     override fun getItemCount(): Int {
-        return eventos.size
+        return asistentes.size
     }
 
     class ViewHolder(view: View, val context: AppCompatActivity) :
         RecyclerView.ViewHolder(view) {
-        val txtNombre = view.findViewById<TextView>(R.id.txtNombreEventoGestion)
-        val txtNumAsistentes = view.findViewById<TextView>(R.id.txtNumAsistentesGestion)
-        val txtFechaHora = view.findViewById<TextView>(R.id.txtFechaEventoGestion)
+        val imgUsuario = view.findViewById<ImageView>(R.id.imgUsuarioItem)
+        val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioItem)
+        val storageRef = Firebase.storage.reference
 
         @SuppressLint("SetTextI18n")
         fun bind(
-            evento: EventoItem,
+            asistente: Asistente,
             context: AppCompatActivity,
             pos: Int,
-            gestionEventosAdapter: GestionEventosAdapter
+            asistentesAdapter: AsistentesAdapter
         ) {
-            txtNombre.text = evento.nombre
-            txtNumAsistentes.text =
-                "${evento.numAsistentes} ${context.getString(R.string.strAsistentes)}"
-            txtFechaHora.text = "${evento.fecha} - ${evento.hora}"
-
-            itemView.setOnClickListener {
-                val intent = Intent(context, GestionEventoDetalle::class.java)
-                intent.putExtra(context.getString(R.string.strEvento), Auxiliar.idEvento(evento))
-                context.startActivity(intent)
-            }
+            cargarImagen(asistente)
+            txtNombre.text = asistente.email
             itemView.setOnLongClickListener {
-                eliminar(evento, gestionEventosAdapter)
+                expulsar(asistente, asistentesAdapter)
                 true
             }
         }
 
-        private fun eliminar(evento: EventoItem, gestionEventosAdapter: GestionEventosAdapter) {
+        private fun cargarImagen(asistente: Asistente) {
+            val imgRef = storageRef.child("${BDFirestore.CARPETA_IMAGENES}/${asistente.email}.jpg")
+            imgRef.getBytes(1024 * 1024)
+                .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
+        }
+
+        private fun expulsar(asistente: Asistente, asistentesAdapter: AsistentesAdapter) {
             AlertDialog.Builder(context)
-                .setTitle(context.getString(R.string.strEliminar))
-                .setMessage(context.getString(R.string.strMensajeEliminarEvento))
+                .setTitle(context.getString(R.string.strExpulsar))
+                .setMessage(context.getString(R.string.strMsgExpulsarUsuario, asistente.email))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
-                    BDFirestore.deleteEvento(Auxiliar.idEvento(evento))
-                    gestionEventosAdapter.delete(evento)
+                    asistentesAdapter.delete(asistente)
                     Toast.makeText(
                         context,
                         context.getString(R.string.strEventoEliminado),
@@ -94,8 +92,9 @@ class GestionEventosAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun delete(evento: EventoItem) {
-        eventos.remove(evento)
+    private fun delete(asistente: Asistente) {
+        asistentes.remove(asistente)
+        BDFirestore.actualizarAsistentesEvento(evento, asistentes)
         notifyDataSetChanged()
     }
 

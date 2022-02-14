@@ -11,10 +11,16 @@ import android.os.Bundle
 import android.widget.EditText
 import androidx.fragment.app.DialogFragment
 import com.google.android.gms.tasks.OnSuccessListener
+import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
+import model.Evento
 import java.util.*
 
 
-class DatePickerFragment(val editText: EditText) : DialogFragment(), OnDateSetListener {
+class DatePickerFragment(
+    val editText: EditText,
+    val saved: Boolean = false,
+    val evento: Evento? = null
+) : DialogFragment(), OnDateSetListener {
 
     private var listener: OnDateSetListener? = null
 
@@ -34,5 +40,6 @@ class DatePickerFragment(val editText: EditText) : DialogFragment(), OnDateSetLi
         val dia = String.format("%02d", day)
         val mes = String.format("%02d", month + 1)
         editText!!.setText("$dia/$mes/$year")
+        if (saved) BDFirestore.changeDateEvent(evento!!, editText.text.toString())
     }
 }

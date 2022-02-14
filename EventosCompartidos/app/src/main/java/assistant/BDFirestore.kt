@@ -1,6 +1,8 @@
 package assistant
 
 import android.annotation.SuppressLint
+import android.util.Log
+import assistant.Auxiliar.idEvento
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -13,24 +15,18 @@ import kotlinx.coroutines.tasks.await
 import model.*
 
 object BDFirestore {
-    val COL_USUARIOS = "usuarios"
-    val EMAIL__USUARIOS = "email"
-    val ROL__USUARIOS = "rol"
-    val ACTIVADO__USUARIOS = "activado"
-
-    val COL_EVENTOS = "eventos"
-    val NOMBRE__EVENTOS = "nombre"
-    val FECHA__EVENTOS = "fecha"
-    val HORA__EVENTOS = "hora"
-    val ASISTENTES__EVENTOS = "asistentes"
-    val PUNTO_REUNION__EVENTOS = "punto de reunión"
-    val PRESENTES__EVENTOS = "presentes"
 
     @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
 
-
     //************************ USUARIOS ************************
+    val CARPETA_IMAGENES = "imgsUsuarios"
+    val COL_USUARIOS = "usuarios"
+    val EMAIL__USUARIOS = "email"
+    val ROL__USUARIOS = "rol"
+    val ACTIVADO__USUARIOS = "activado"
+    val IMAGEN__USUARIOS = "imagen"
+
     fun getUsuario(email: String): Usuario? {
         var usuario: Usuario? = null
         runBlocking {
@@ -115,7 +111,42 @@ object BDFirestore {
             .await()
     }
 
+    fun getUsuariosDisponibles(evento: Evento): ArrayList<String> {
+        var usuarios = ArrayList<String>(0)
+        runBlocking {
+            val job: Job = launch {
+                val data: QuerySnapshot = queryUsuariosDisponibles(evento) as QuerySnapshot
+                for (dc: DocumentChange in data.documentChanges) {
+                    if (dc.type == DocumentChange.Type.ADDED) {
+                        usuarios.add(dc.document.get(EMAIL__USUARIOS).toString())
+                    }
+                }
+            }
+            job.join()
+        }
+        return usuarios
+    }
+
+    private suspend fun queryUsuariosDisponibles(evento: Evento): Any {
+        return if (evento.tieneAsistentes()) db.collection(COL_USUARIOS)
+            .whereNotIn(EMAIL__USUARIOS, evento.listaAsistentes())
+            .get()
+            .await()
+        else db.collection(COL_USUARIOS)
+            .get()
+            .await()
+    }
+
     //************************ EVENTOS ************************
+    val COL_EVENTOS = "eventos"
+    val NOMBRE__EVENTOS = "nombre"
+    val FECHA__EVENTOS = "fecha"
+    val HORA__EVENTOS = "hora"
+    val ASISTENTES__EVENTOS = "asistentes"
+    val PUNTO_REUNION__EVENTOS = "punto de reunión"
+    val LUGARES__EVENTOS = "lugares"
+    val PRESENTES__EVENTOS = "presentes"
+
     fun getEventos(): ArrayList<EventoItem> {
         var eventos = ArrayList<EventoItem>(0)
         runBlocking {
@@ -127,7 +158,7 @@ object BDFirestore {
                             dc.document.get(NOMBRE__EVENTOS).toString(),
                             dc.document.get(FECHA__EVENTOS).toString(),
                             dc.document.get(HORA__EVENTOS).toString(),
-                            dc.document.get(ASISTENTES__EVENTOS) as Long
+                            dc.document.get(ASISTENTES__EVENTOS) as ArrayList<Asistente>
                         )
                         eventos.add(evento)
                     }
@@ -166,7 +197,8 @@ object BDFirestore {
             NOMBRE__EVENTOS to ev.nombre,
             FECHA__EVENTOS to ev.fecha,
             HORA__EVENTOS to ev.hora,
-            ASISTENTES__EVENTOS to 0
+            ASISTENTES__EVENTOS to ev.asistentes,
+            LUGARES__EVENTOS to ev.lugares
         )
         db.collection(COL_EVENTOS).document(Auxiliar.idEvento(ev))
             .set(evento)
@@ -181,16 +213,47 @@ object BDFirestore {
         runBlocking {
             val job: Job = launch {
                 val data: DocumentSnapshot = queryEvento(idEvento)
-                    evento = Evento(
-                        data.get(NOMBRE__EVENTOS) as String,
-                        data.get(FECHA__EVENTOS) as String,
-                        data.get(HORA__EVENTOS) as String,
-                        data.get(PUNTO_REUNION__EVENTOS) as Localizacion?
-                    )
+                evento = Evento(
+                    data.get(NOMBRE__EVENTOS) as String,
+                    data.get(FECHA__EVENTOS) as String,
+                    data.get(HORA__EVENTOS) as String,
+                    destriparPuntoReunion(data.get(PUNTO_REUNION__EVENTOS) as HashMap<String, *>?),
+                    destriparAsistentes(data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>),
+                    destriparLugares(data.get(LUGARES__EVENTOS) as ArrayList<HashMap<String, *>>)
+                )
             }
             job.join()
         }
         return evento!!
+    }
+
+    private fun destriparLugares(data: ArrayList<HashMap<String, *>>): ArrayList<Lugar> {
+        val keys = Lugar.getCampos()
+        val lugares = ArrayList<Lugar>(0)
+        for (d in data) {
+            lugares.add(Lugar(d[keys[0]] as String, location(d[keys[1]] as HashMap<String, *>)))
+        }
+        return lugares
+    }
+
+    private fun location(loc: HashMap<String, *>): Localizacion {
+        val keys = Localizacion.getCampos()
+        return Localizacion(loc[keys[0]] as Double, loc[keys[1]] as Double)
+    }
+
+    private fun destriparPuntoReunion(loc: HashMap<String, *>?): Localizacion? {
+        val keys = Localizacion.getCampos()
+        return if (loc != null) Localizacion(loc[keys[0]] as Double, loc[keys[1]] as Double)
+        else null
+    }
+
+    private fun destriparAsistentes(data: ArrayList<HashMap<String, *>>): ArrayList<Asistente> {
+        val keys = Asistente.getCampos()
+        val asistentes = ArrayList<Asistente>(0)
+        for (a in data) {
+            asistentes.add(Asistente(a[keys[0]].toString(), a[keys[1]].toString()))
+        }
+        return asistentes
     }
 
     private suspend fun queryEvento(idEvento: String): DocumentSnapshot {
@@ -198,6 +261,63 @@ object BDFirestore {
             .document(idEvento)
             .get()
             .await()
+    }
+
+    fun changeNameEvent(evento: Evento, nuevoNombre: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.nombre = nuevoNombre
+                val data = it.data!!
+                data[NOMBRE__EVENTOS] = nuevoNombre
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
+    }
+
+    fun changeDateEvent(evento: Evento, nuevaFecha: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.fecha = nuevaFecha
+                val data = it.data!!
+                data[FECHA__EVENTOS] = nuevaFecha
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
+    }
+
+    fun changeHourEvent(evento: Evento, nuevaHora: String) {
+        val id = Auxiliar.idEvento(evento)
+        db.collection(COL_EVENTOS).document(id).get()
+            .addOnSuccessListener {
+                evento.hora = nuevaHora
+                val data = it.data!!
+                data[HORA__EVENTOS] = nuevaHora
+                db.collection(COL_EVENTOS).document(Auxiliar.idEvento(evento)).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(id).delete()
+                    }
+            }
+    }
+
+    fun actualizarAsistentesEvento(evento: Evento, asistentes: ArrayList<Asistente>) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(ASISTENTES__EVENTOS, asistentes)
+    }
+
+    fun establecerPuntoReunion(punto: Localizacion, evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(PUNTO_REUNION__EVENTOS, punto)
+    }
+
+    fun actualizarListaLugares(evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(LUGARES__EVENTOS, evento.lugares)
     }
 
 }
