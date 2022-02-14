@@ -128,11 +128,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             .setTitle(getString(R.string.strConfirmar))
             .setMessage(getString(R.string.strConfirmarNuevoLugar) + "\n$loc")
             .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
-                map.addMarker(
-                    MarkerOptions().position(loc).icon(
-                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
-                    )
-                )
                 pedirNombreLugar(loc)
                 view.dismiss()
             }
@@ -150,8 +145,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
             .setTitle(getString(R.string.strNombreLugar))
             .setView(dialog)
             .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                val nombre = edNombre.text.toString()
+                map.addMarker(
+                    MarkerOptions().position(loc).title(nombre).icon(
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    )
+                )
                 val lugar =
-                    Lugar(edNombre.text.toString(), Localizacion(loc.latitude, loc.longitude))
+                    Lugar(nombre, Localizacion(loc.latitude, loc.longitude))
                 evento.addPlace(lugar)
                 BDFirestore.actualizarListaLugares(evento)
                 view.dismiss()
