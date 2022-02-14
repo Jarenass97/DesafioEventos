@@ -8,10 +8,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import assistant.Auxiliar
-import assistant.CamposBD.ACTIVADO__USUARIOS
-import assistant.CamposBD.COL_USUARIOS
-import assistant.CamposBD.EMAIL__USUARIOS
-import assistant.CamposBD.ROL__USUARIOS
+import assistant.BDFirestore
+import assistant.BDFirestore.ACTIVADO__USUARIOS
+import assistant.BDFirestore.COL_USUARIOS
+import assistant.BDFirestore.EMAIL__USUARIOS
+import assistant.BDFirestore.IMAGEN__USUARIOS
+import assistant.BDFirestore.ROL__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -33,7 +35,6 @@ import model.Usuario
 
 class LoginActivity : AppCompatActivity() {
     private var RC_SIGN_IN = 1
-    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +105,7 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            val usuario: Usuario = catchUser(email)!!
+            val usuario: Usuario = BDFirestore.getUsuario(email)!!
             irMain(usuario)
         }
     }
@@ -145,7 +146,7 @@ class LoginActivity : AppCompatActivity() {
 
     //*********************************************************************************
     private fun acceder(email: String) {
-        val usuario: Usuario? = catchUser(email)
+        val usuario: Usuario? = BDFirestore.getUsuario(email)
         if (usuario == null) {
             registrarUsuario(email)
         } else {
@@ -164,35 +165,11 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun catchUser(email: String): Usuario? {
-        var usuario: Usuario? = null
-        runBlocking {
-            val job: Job = launch {
-                val data: DocumentSnapshot = getUser(email)
-                if (data.exists()) {
-                    usuario = Usuario(
-                        data.get(EMAIL__USUARIOS) as String,
-                        Rol.valueOf(data.get(ROL__USUARIOS) as String),
-                        data.get(ACTIVADO__USUARIOS) as Boolean
-                    )
-                }
-            }
-            job.join()
-        }
-        return usuario
-    }
-
-    private suspend fun getUser(email: String): DocumentSnapshot {
-        return db.collection(COL_USUARIOS)
-            .document(email)
-            .get()
-            .await()
-    }
 
     private fun registrarUsuario(email: String) {
         var rol: Rol
         var act: Boolean
-        val hayRegistrados = usuariosReg()
+        val hayRegistrados = BDFirestore.usuariosReg()
         rol = if (hayRegistrados) Rol.USUARIO
         else Rol.ADMINISTRADOR
         act = !hayRegistrados
@@ -202,31 +179,15 @@ class LoginActivity : AppCompatActivity() {
             ROL__USUARIOS to rol,
             ACTIVADO__USUARIOS to act
         )
+        val db = Firebase.firestore
         db.collection(COL_USUARIOS).document(email)
             .set(user)
             .addOnSuccessListener {
-                if(hayRegistrados)
-                Toast.makeText(this, getString(R.string.strWaitActivate), Toast.LENGTH_SHORT)
-                    .show()
+                if (hayRegistrados)
+                    Toast.makeText(this, getString(R.string.strWaitActivate), Toast.LENGTH_SHORT)
+                        .show()
                 else acceder(email)
             }
     }
 
-    private fun usuariosReg(): Boolean {
-        var reg = false
-        runBlocking {
-            val job: Job = launch {
-                val data: QuerySnapshot = queryUsuarios() as QuerySnapshot
-                reg = data.documentChanges.size > 0
-            }
-            job.join()
-        }
-        return reg
-    }
-
-    private suspend fun queryUsuarios(): Any {
-        return db.collection(COL_USUARIOS)
-            .get()
-            .await()
-    }
 }
