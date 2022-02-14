@@ -8,7 +8,7 @@ import android.location.Geocoder
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -23,21 +23,31 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.example.eventoscompartidos.databinding.ActivityMapsBinding
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import kotlinx.android.synthetic.main.activity_maps.*
+import model.Evento
 import model.Localizacion
-import java.io.IOException
+import model.Lugar
+import model.MapsOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
     private lateinit var map: GoogleMap
     private lateinit var binding: ActivityMapsBinding
     private lateinit var myUbication: LatLng
+    lateinit var opcion: MapsOptions
+    lateinit var evento: Evento
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val bun: Bundle = intent.extras!!
+        opcion = bun.getSerializable("opcion") as MapsOptions
+        if (opcion == MapsOptions.ADD_PLACES)
+            evento = bun.getSerializable("evento") as Evento
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -76,6 +86,21 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         obtenerMiUbi()
         irMyUbication()
         map.setOnMapClickListener(this)
+        if (opcion == MapsOptions.ADD_PLACES) toMarkPlaces()
+    }
+
+    private fun toMarkPlaces() {
+        map.addMarker(
+            MarkerOptions().position(evento.localizacionPuntoReunion()).title(evento.nombre)
+                .snippet("${evento.fecha} ${evento.hora}")
+        )
+        for (lugar in evento.lugares) {
+            map.addMarker(
+                MarkerOptions().position(lugar.latLng()).title(lugar.nombre).icon(
+                    BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                )
+            )
+        }
     }
 
     private fun irMyUbication() {
@@ -92,6 +117,53 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     }
 
     override fun onMapClick(loc: LatLng) {
+        when (opcion) {
+            MapsOptions.CHANGE_REUNION -> changeReunion(loc)
+            MapsOptions.ADD_PLACES -> addPlace(loc)
+        }
+    }
+
+    private fun addPlace(loc: LatLng) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strConfirmar))
+            .setMessage(getString(R.string.strConfirmarNuevoLugar) + "\n$loc")
+            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                map.addMarker(
+                    MarkerOptions().position(loc).icon(
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    )
+                )
+                pedirNombreLugar(loc)
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                view.dismiss()
+            }
+            .setCancelable(false)
+            .create().show()
+    }
+
+    private fun pedirNombreLugar(loc: LatLng) {
+        val dialog = layoutInflater.inflate(R.layout.dialog_pide_string, null)
+        val edNombre = dialog.findViewById<EditText>(R.id.edStringDialog)
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strNombreLugar))
+            .setView(dialog)
+            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                val lugar =
+                    Lugar(edNombre.text.toString(), Localizacion(loc.latitude, loc.longitude))
+                evento.addPlace(lugar)
+                BDFirestore.actualizarListaLugares(evento)
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                view.dismiss()
+            }
+            .setCancelable(false)
+            .create().show()
+    }
+
+    private fun changeReunion(loc: LatLng) {
         map.addMarker(MarkerOptions().position(loc))
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.strConfirmar))

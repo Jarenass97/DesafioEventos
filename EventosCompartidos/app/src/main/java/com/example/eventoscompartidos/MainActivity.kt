@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         prefs?.putString("email", usuario.email)
         prefs?.apply()
 
-        if (usuario.isAdmin()) cargarGestionUsuarios()
+        if (usuario.isAdmin()) cargarGestionEventos()
         else cargarAppUsuario()
 
     }

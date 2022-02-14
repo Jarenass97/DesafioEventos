@@ -41,4 +41,6 @@
     <string name="strConfirmar">Confirmar</string>
     <string name="strConfirmarPuntoReunion">¿Está seguro de establecer el evento en este lugar?</string>
     <string name="strDirNoEncontrada">No se encuentra la dirección indicada</string>
+    <string name="strConfirmarNuevoLugar">¿Está seguro de añadir un punto de visita en este lugar?</string>
+    <string name="strNombreLugar">Nombre del lugar</string>
 </resources>

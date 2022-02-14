@@ -8,16 +8,17 @@ import model.Usuario
 import java.io.ByteArrayOutputStream
 
 object Auxiliar {
-    val CODE_CHANGE_UBICATION=1
-    val LOCATION_REQUEST_CODE=0
+    val CODE_CHANGE_UBICATION = 1
+    val CODE_ADD_PLACES = 2
+    val LOCATION_REQUEST_CODE = 0
 
     lateinit var usuario: Usuario
 
     fun idEvento(evento: Evento): String =
-        "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ","_")
+        "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ", "_")
 
     fun idEvento(evento: EventoItem): String =
-        "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ","_")
+        "${evento.nombre}-${evento.fecha}-${evento.hora}".replace("/", "").replace(" ", "_")
 
     fun getBytes(bitmap: Bitmap): ByteArray? {
         val stream = ByteArrayOutputStream()

@@ -1,6 +1,7 @@
 package assistant
 
 import android.annotation.SuppressLint
+import android.util.Log
 import assistant.Auxiliar.idEvento
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
@@ -143,6 +144,7 @@ object BDFirestore {
     val HORA__EVENTOS = "hora"
     val ASISTENTES__EVENTOS = "asistentes"
     val PUNTO_REUNION__EVENTOS = "punto de reunión"
+    val LUGARES__EVENTOS = "lugares"
     val PRESENTES__EVENTOS = "presentes"
 
     fun getEventos(): ArrayList<EventoItem> {
@@ -195,7 +197,8 @@ object BDFirestore {
             NOMBRE__EVENTOS to ev.nombre,
             FECHA__EVENTOS to ev.fecha,
             HORA__EVENTOS to ev.hora,
-            ASISTENTES__EVENTOS to ev.asistentes
+            ASISTENTES__EVENTOS to ev.asistentes,
+            LUGARES__EVENTOS to ev.lugares
         )
         db.collection(COL_EVENTOS).document(Auxiliar.idEvento(ev))
             .set(evento)
@@ -215,12 +218,27 @@ object BDFirestore {
                     data.get(FECHA__EVENTOS) as String,
                     data.get(HORA__EVENTOS) as String,
                     destriparPuntoReunion(data.get(PUNTO_REUNION__EVENTOS) as HashMap<String, *>?),
-                    destriparAsistentes(data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>)
+                    destriparAsistentes(data.get(ASISTENTES__EVENTOS) as ArrayList<HashMap<String, *>>),
+                    destriparLugares(data.get(LUGARES__EVENTOS) as ArrayList<HashMap<String, *>>)
                 )
             }
             job.join()
         }
         return evento!!
+    }
+
+    private fun destriparLugares(data: ArrayList<HashMap<String, *>>): ArrayList<Lugar> {
+        val keys = Lugar.getCampos()
+        val lugares = ArrayList<Lugar>(0)
+        for (d in data) {
+            lugares.add(Lugar(d[keys[0]] as String, location(d[keys[1]] as HashMap<String, *>)))
+        }
+        return lugares
+    }
+
+    private fun location(loc: HashMap<String, *>): Localizacion {
+        val keys = Localizacion.getCampos()
+        return Localizacion(loc[keys[0]] as Double, loc[keys[1]] as Double)
     }
 
     private fun destriparPuntoReunion(loc: HashMap<String, *>?): Localizacion? {
@@ -295,6 +313,11 @@ object BDFirestore {
     fun establecerPuntoReunion(punto: Localizacion, evento: Evento) {
         db.collection(COL_EVENTOS).document(idEvento(evento))
             .update(PUNTO_REUNION__EVENTOS, punto)
+    }
+
+    fun actualizarListaLugares(evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(LUGARES__EVENTOS, evento.lugares)
     }
 
 }

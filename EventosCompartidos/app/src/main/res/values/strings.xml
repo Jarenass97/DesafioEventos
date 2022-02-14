@@ -46,4 +46,6 @@
     <string name="strConfirmar">Confirm</string>
     <string name="strConfirmarPuntoReunion">Are you sure to set the event to this location?</string>
     <string name="strDirNoEncontrada">The indicated address is not found</string>
+    <string name="strConfirmarNuevoLugar">Are you sure to add a point of visit at this place?</string>
+    <string name="strNombreLugar">Place´s name</string>
 </resources>

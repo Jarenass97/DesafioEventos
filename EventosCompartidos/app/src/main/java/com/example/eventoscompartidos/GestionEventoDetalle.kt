@@ -12,6 +12,7 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -36,6 +37,7 @@ import kotlinx.android.synthetic.main.activity_gestion_evento_detalle.*
 import model.Asistente
 import model.Evento
 import model.Localizacion
+import model.MapsOptions
 
 class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     GoogleMap.OnMyLocationChangeListener {
@@ -131,13 +133,21 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.miEditName -> editarNombre()
+            R.id.miAddPlaces -> addPlace()
         }
         return super.onOptionsItemSelected(item)
     }
 
+    private fun addPlace() {
+        val intent = Intent(this, MapsActivity::class.java)
+        intent.putExtra("opcion", MapsOptions.ADD_PLACES)
+        intent.putExtra("evento", evento)
+        startActivityForResult(intent, Auxiliar.CODE_ADD_PLACES)
+    }
+
     private fun editarNombre() {
-        val dialog = layoutInflater.inflate(R.layout.dialog_edit_nombre_evento, null)
-        val edNombre = dialog.findViewById<EditText>(R.id.edNombreEventoEditor)
+        val dialog = layoutInflater.inflate(R.layout.dialog_pide_string, null)
+        val edNombre = dialog.findViewById<EditText>(R.id.edStringDialog)
         edNombre.setText(evento.nombre)
         AlertDialog.Builder(this)
             .setTitle("Cambiar nombre")
@@ -164,7 +174,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
-        map.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
         enableMyLocation()
         obtenerMiUbi()
         if (evento.puntoReunion != null) {
@@ -248,6 +258,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
     fun cambiarUbicacion(view: View) {
         val intent = Intent(this, MapsActivity::class.java)
+        intent.putExtra("opcion", MapsOptions.CHANGE_REUNION)
         startActivityForResult(intent, Auxiliar.CODE_CHANGE_UBICATION)
     }
 
@@ -270,6 +281,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                     cargarMapa()
                 }
             }
+            Auxiliar.CODE_ADD_PLACES -> evento = BDFirestore.getEvento(Auxiliar.idEvento(evento))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
