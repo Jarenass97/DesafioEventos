@@ -4,13 +4,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.fragments.Administrador.GestionEventosFragment
 import com.example.eventoscompartidos.fragments.Administrador.GestionUsuariosFragment
+import com.example.eventoscompartidos.fragments.Administrador.MenuInferiorAdminFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -25,43 +24,40 @@ class MainActivity : AppCompatActivity() {
         prefs?.putString("email", usuario.email)
         prefs?.apply()
 
-        if (usuario.isAdmin()) cargarGestionEventos()
+        if (usuario.isAdmin()) cargarAppAdmin()
         else cargarAppUsuario()
+    }
+
+    private fun cargarMenuUser() {
 
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_admin_actions, menu)
-        return super.onCreateOptionsMenu(menu)
+    private fun cargarMenuAdmin() {
+        fragment = MenuInferiorAdminFragment(this)
+        replaceFragmentMenu(fragment)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menuAdminUsers -> cargarGestionUsuarios()
-            R.id.menuAdminEvents -> cargarGestionEventos()
-        }
-        return super.onOptionsItemSelected(item)
-    }
 
-    private fun cargarGestionEventos() {
+    private fun cargarAppAdmin() {
         title = "Gestión de eventos"
         fragment = GestionEventosFragment(this)
-        replaceFragment(fragment)
+        replaceFragmentVentana(fragment)
+        cargarMenuAdmin()
     }
 
     private fun cargarAppUsuario() {
-
+        cargarMenuUser()
     }
 
-    private fun cargarGestionUsuarios() {
-        title = "Gestión de usuarios"
-        fragment = GestionUsuariosFragment(this)
-        replaceFragment(fragment)
-    }
-
-    private fun replaceFragment(fragment: Fragment) {
+    private fun replaceFragmentVentana(fragment: Fragment) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frmVentana, fragment)
+        fragmentTransaction.commit()
+    }
+
+    private fun replaceFragmentMenu(fragment: Fragment) {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frmMenu, fragment)
         fragmentTransaction.commit()
     }
 

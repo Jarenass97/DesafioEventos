@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import assistant.Auxiliar
 import assistant.BDFirestore
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -25,6 +26,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         return inflater.inflate(R.layout.fragment_gestion_eventos, container, false)
     }
 
@@ -34,9 +36,18 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
         adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
         rvGestionEventos.adapter = adaptador
-        btnAddEvent.setOnClickListener {
-            crearEvento()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_admin_events_fragment, menu)
+        return super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.miAddEvent -> crearEvento()
         }
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onResume() {
