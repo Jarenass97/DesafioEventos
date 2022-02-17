@@ -2,18 +2,17 @@ package com.example.eventoscompartidos.fragments.Administrador
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.R
 import com.example.eventoscompartidos.fragments.PerfilUsuarioFragment
 import kotlinx.android.synthetic.main.fragment_menu_admin.*
+import kotlinx.android.synthetic.main.fragment_perfil_usuario.*
 
 class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
     override fun onCreateView(
@@ -48,7 +47,7 @@ class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
 
     private fun cargarPerfil() {
         ventana.title = "Perfil"
-        val fragment = PerfilUsuarioFragment(ventana)
+        val fragment = PerfilUsuarioFragment(ventana,imgUsuarioMenu)
         replaceFragmentVentana(fragment)
     }
 
