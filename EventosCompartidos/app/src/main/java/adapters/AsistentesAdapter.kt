@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 import com.example.eventoscompartidos.R
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -64,7 +64,7 @@ class AsistentesAdapter(
         }
 
         private fun cargarImagen(asistente: Asistente) {
-            val imgRef = storageRef.child("${BDFirestore.CARPETA_IMAGENES}/${asistente.email}.jpg")
+            val imgRef = storageRef.child("${BDFirebase.CARPETA_IMAGENES}/${asistente.email}.jpg")
             imgRef.getBytes(1024 * 1024)
                 .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
         }
@@ -94,7 +94,7 @@ class AsistentesAdapter(
     @SuppressLint("NotifyDataSetChanged")
     private fun delete(asistente: Asistente) {
         asistentes.remove(asistente)
-        BDFirestore.actualizarAsistentesEvento(evento, asistentes)
+        BDFirebase.actualizarAsistentesEvento(evento, asistentes)
         notifyDataSetChanged()
     }
 

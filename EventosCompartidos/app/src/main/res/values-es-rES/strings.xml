@@ -43,4 +43,9 @@
     <string name="strDirNoEncontrada">No se encuentra la dirección indicada</string>
     <string name="strConfirmarNuevoLugar">¿Está seguro de añadir un punto de visita en este lugar?</string>
     <string name="strNombreLugar">Nombre del lugar</string>
+    <string name="strChangeImage">Cambiar imagen</string>
+    <string name="strElegirFoto">Elegir foto</string>
+    <string name="strMensajeElegirFoto">¿Cómo quiere añadir la foto?</string>
+    <string name="strCamara">Cámara</string>
+    <string name="strGaleria">Galeria</string>
 </resources>

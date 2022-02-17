@@ -9,8 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.example.eventoscompartidos.R
@@ -34,7 +33,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         rvGestionEventos.setHasFixedSize(true)
         rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
-        adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
+        adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
         rvGestionEventos.adapter = adaptador
     }
 
@@ -52,7 +51,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
+        adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
         rvGestionEventos.adapter = adaptador
     }
 
@@ -74,8 +73,8 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
                             fecha.text.toString(),
                             hora.text.toString()
                         )
-                    BDFirestore.addEvento(ev)
-                    adaptador = EventosAdapter(ventana, BDFirestore.getEventos())
+                    BDFirebase.addEvento(ev)
+                    adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
                     rvGestionEventos.adapter = adaptador
                 } else {
                     Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)

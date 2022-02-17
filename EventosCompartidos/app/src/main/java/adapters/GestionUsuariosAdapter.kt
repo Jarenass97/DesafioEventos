@@ -8,11 +8,8 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import assistant.BDFirestore
-import assistant.BDFirestore.COL_USUARIOS
+import assistant.BDFirebase
 import com.example.eventoscompartidos.R
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import model.UsuarioItem
 
 class GestionUsuariosAdapter(
@@ -61,8 +58,8 @@ class GestionUsuariosAdapter(
             txtUsuario.text = user.email
             itemView.setOnClickListener(View.OnClickListener {
                 user.activado = !user.activado
-                if(user.activado) BDFirestore.activarUsuario(user)
-                else BDFirestore.desactivarUsuario(user)
+                if(user.activado) BDFirebase.activarUsuario(user)
+                else BDFirebase.desactivarUsuario(user)
                 gestionUsuariosAdapter.notifyDataSetChanged()
             })
             itemView.setOnLongClickListener(View.OnLongClickListener {
@@ -77,7 +74,7 @@ class GestionUsuariosAdapter(
                 .setMessage(context.getString(R.string.strConfirmacionDeleteUser))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
                     gestionUsuariosAdapter.delUser(user)
-                    BDFirestore.deleteUsuario(user)
+                    BDFirebase.deleteUsuario(user)
                     view.dismiss()
                 }
                 .setNegativeButton(context.getString(R.string.strCancelar)) { view, _ ->
