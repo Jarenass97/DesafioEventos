@@ -14,12 +14,7 @@ data class Usuario(
     var img: Bitmap? = null
 ) {
     init {
-        runBlocking {
-            val job: Job = launch {
-                BDFirebase.getImg(email)
-            }
-            job.join()
-        }
+        img = BDFirebase.getImg(email)
     }
 
     fun isAdmin(): Boolean = rol == Rol.ADMINISTRADOR

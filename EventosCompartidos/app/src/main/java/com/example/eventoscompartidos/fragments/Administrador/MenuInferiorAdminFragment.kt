@@ -43,7 +43,6 @@ class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
             }
             true
         }
-        Log.e("jorge", usuario.img.toString())
         if (usuario.img != null) imgUsuarioMenu.setImageBitmap(usuario.img)
     }
 

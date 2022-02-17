@@ -2,12 +2,7 @@ package assistant
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.util.Log
-import android.widget.Toast
 import assistant.Auxiliar.idEvento
-import assistant.Auxiliar.usuario
-import com.example.eventoscompartidos.R
-import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
@@ -150,12 +145,26 @@ object BDFirebase {
         imgRef.putBytes(Auxiliar.getBytes(image)!!)
     }
 
-    suspend fun getImg(email: String) {
-        val imgRef = storageRef.child("FotosPerfil/$email.jpg")
-        val ONE_MEGABYTE: Long = 1024 * 1024
-        imgRef.getBytes(ONE_MEGABYTE).addOnSuccessListener {
-            usuario.img = Auxiliar.getBitmap(it)
-        }.await()
+    fun getImg(email: String): Bitmap? {
+        var img: Bitmap? = null
+        runBlocking {
+            val job: Job = launch {
+                val data = image(email)
+                if (data != null) img = Auxiliar.getBitmap(data)
+            }
+            job.join()
+        }
+        return img
+    }
+
+    private suspend fun image(email: String): ByteArray? {
+        return try {
+            val imgRef = storageRef.child("FotosPerfil/$email.jpg")
+            val ONE_MEGABYTE: Long = 1024 * 1024
+            imgRef.getBytes(ONE_MEGABYTE).await()
+        } catch (e: Exception) {
+            null
+        }
     }
 
     //************************ EVENTOS ************************
