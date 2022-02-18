@@ -2,12 +2,17 @@ package assistant
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import assistant.Auxiliar.idEvento
+import assistant.Auxiliar.usuario
+import com.google.android.gms.tasks.CancellationTokenSource
+import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -15,6 +20,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import model.*
 import java.lang.Exception
+import java.util.concurrent.Executor
 
 object BDFirebase {
 
@@ -29,6 +35,7 @@ object BDFirebase {
     val ROL__USUARIOS = "rol"
     val ACTIVADO__USUARIOS = "activado"
     val IMAGEN__USUARIOS = "imagen"
+    val TIENE_FOTO__USUARIOS = "tieneFoto"
 
     fun getUsuario(email: String): Usuario? {
         var usuario: Usuario? = null
@@ -39,7 +46,8 @@ object BDFirebase {
                     usuario = Usuario(
                         data.get(EMAIL__USUARIOS) as String,
                         Rol.valueOf(data.get(ROL__USUARIOS) as String),
-                        data.get(ACTIVADO__USUARIOS) as Boolean
+                        data.get(ACTIVADO__USUARIOS) as Boolean,
+                        data.get(TIENE_FOTO__USUARIOS) as Boolean
                     )
                 }
             }
@@ -141,8 +149,10 @@ object BDFirebase {
     }
 
     fun cambiarImageUser(image: Bitmap) {
-        val imgRef = storageRef.child("FotosPerfil/${Auxiliar.usuario.email}.jpg")
+        val imgRef = storageRef.child("FotosPerfil/${usuario.email}.jpg")
         imgRef.putBytes(Auxiliar.getBytes(image)!!)
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(TIENE_FOTO__USUARIOS,true)
     }
 
     fun getImg(email: String): Bitmap? {

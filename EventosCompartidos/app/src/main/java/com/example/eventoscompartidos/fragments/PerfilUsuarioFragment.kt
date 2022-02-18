@@ -129,6 +129,6 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
         BDFirebase.cambiarImageUser(image)
         imgUsuarioPerfil.setImageBitmap(image)
         imgUsuarioMenu.setImageBitmap(image)
-        usuario.img = image
+        usuario.asignarImagen(image)
     }
 }

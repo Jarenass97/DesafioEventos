@@ -13,6 +13,7 @@ import assistant.BDFirebase.ACTIVADO__USUARIOS
 import assistant.BDFirebase.COL_USUARIOS
 import assistant.BDFirebase.EMAIL__USUARIOS
 import assistant.BDFirebase.ROL__USUARIOS
+import assistant.BDFirebase.TIENE_FOTO__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -170,7 +171,8 @@ class LoginActivity : AppCompatActivity() {
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
             ROL__USUARIOS to rol,
-            ACTIVADO__USUARIOS to act
+            ACTIVADO__USUARIOS to act,
+            TIENE_FOTO__USUARIOS to false
         )
         val db = Firebase.firestore
         db.collection(COL_USUARIOS).document(email)

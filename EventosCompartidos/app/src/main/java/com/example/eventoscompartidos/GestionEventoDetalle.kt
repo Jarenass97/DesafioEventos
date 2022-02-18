@@ -12,6 +12,7 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -175,7 +176,6 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         enableMyLocation()
-        obtenerMiUbi()
         if (evento.puntoReunion != null) {
             val pos = evento.localizacionPuntoReunion()
             map.addMarker(
@@ -244,6 +244,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         when (requestCode) {
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 map.isMyLocationEnabled = true
+                obtenerMiUbi()
             } else {
                 Toast.makeText(
                     this,

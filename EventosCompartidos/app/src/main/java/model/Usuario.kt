@@ -11,11 +11,13 @@ data class Usuario(
     var email: String,
     var rol: Rol,
     var activado: Boolean,
-    var img: Bitmap? = null
+    var tieneFoto: Boolean,
+    var img: Bitmap? = if (tieneFoto) BDFirebase.getImg(email) else null
 ) {
-    init {
-        img = BDFirebase.getImg(email)
-    }
 
     fun isAdmin(): Boolean = rol == Rol.ADMINISTRADOR
+    fun asignarImagen(image: Bitmap) {
+        img = image
+        tieneFoto = true
+    }
 }
