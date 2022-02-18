@@ -1,8 +1,6 @@
 package com.example.eventoscompartidos.fragments.Administrador
 
-import adapters.EventosAdapter
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -10,11 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import assistant.BDFirestore
+import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.R
-import kotlinx.android.synthetic.main.fragment_gestion_eventos.*
+import com.example.eventoscompartidos.fragments.PerfilUsuarioFragment
 import kotlinx.android.synthetic.main.fragment_menu_admin.*
+import kotlinx.android.synthetic.main.fragment_perfil_usuario.*
 
 class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
     override fun onCreateView(
@@ -39,11 +37,18 @@ class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
                 MotionEvent.ACTION_DOWN -> view.setBackgroundResource(R.color.itemSelected)
                 MotionEvent.ACTION_UP -> {
                     view.setBackgroundResource(R.color.yellow_dark)
-                    
+                    cargarPerfil()
                 }
             }
             true
         }
+        if (usuario.img != null) imgUsuarioMenu.setImageBitmap(usuario.img)
+    }
+
+    private fun cargarPerfil() {
+        ventana.title = "Perfil"
+        val fragment = PerfilUsuarioFragment(ventana,imgUsuarioMenu)
+        replaceFragmentVentana(fragment)
     }
 
     private fun cargarGestionEventos() {

@@ -24,7 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -52,7 +52,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
         val bun: Bundle = intent.extras!!
         val idEvento = bun.getSerializable(getString(R.string.strEvento)) as String
-        evento = BDFirestore.getEvento(idEvento)
+        evento = BDFirebase.getEvento(idEvento)
         title = evento.nombre
 
         cargarMapa()
@@ -102,7 +102,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     private fun cargarRecycler(recycler: RecyclerView): UsuariosAinvitarAdapter {
         recycler.setHasFixedSize(true)
         recycler.layoutManager = LinearLayoutManager(this)
-        val adaptador = UsuariosAinvitarAdapter(this, BDFirestore.getUsuariosDisponibles(evento))
+        val adaptador = UsuariosAinvitarAdapter(this, BDFirebase.getUsuariosDisponibles(evento))
         recycler.adapter = adaptador
         return adaptador
     }
@@ -154,7 +154,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
             .setView(dialog)
             .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
                 val nuevoNombre = edNombre.text.toString()
-                BDFirestore.changeNameEvent(evento, nuevoNombre)
+                BDFirebase.changeNameEvent(evento, nuevoNombre)
                 evento.nombre = nuevoNombre
                 title = evento.nombre
                 Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
@@ -176,7 +176,6 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         enableMyLocation()
-        obtenerMiUbi()
         if (evento.puntoReunion != null) {
             val pos = evento.localizacionPuntoReunion()
             map.addMarker(
@@ -245,6 +244,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         when (requestCode) {
             REQUEST_CODE_LOCATION -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 map.isMyLocationEnabled = true
+                obtenerMiUbi()
             } else {
                 Toast.makeText(
                     this,
@@ -276,12 +276,12 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                 if (resultCode == Activity.RESULT_OK) {
                     val punto = data?.extras?.get("result") as Localizacion
                     evento.puntoReunion = punto
-                    BDFirestore.establecerPuntoReunion(punto, evento)
+                    BDFirebase.establecerPuntoReunion(punto, evento)
                     map.clear()
                     cargarMapa()
                 }
             }
-            Auxiliar.CODE_ADD_PLACES -> evento = BDFirestore.getEvento(Auxiliar.idEvento(evento))
+            Auxiliar.CODE_ADD_PLACES -> evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

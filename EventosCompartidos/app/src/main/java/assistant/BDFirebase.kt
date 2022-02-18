@@ -1,23 +1,28 @@
 package assistant
 
 import android.annotation.SuppressLint
-import android.util.Log
+import android.graphics.Bitmap
 import assistant.Auxiliar.idEvento
+import assistant.Auxiliar.usuario
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import model.*
+import java.lang.Exception
 
-object BDFirestore {
+object BDFirebase {
 
     @SuppressLint("StaticFieldLeak")
     private val db = Firebase.firestore
+    private val storageRef = Firebase.storage.reference
 
     //************************ USUARIOS ************************
     val CARPETA_IMAGENES = "imgsUsuarios"
@@ -25,7 +30,8 @@ object BDFirestore {
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
     val ACTIVADO__USUARIOS = "activado"
-    val IMAGEN__USUARIOS = "imagen"
+    val TIENE_FOTO__USUARIOS = "tieneFoto"
+    val USERNAME__USUARIOS = "username"
 
     fun getUsuario(email: String): Usuario? {
         var usuario: Usuario? = null
@@ -36,7 +42,9 @@ object BDFirestore {
                     usuario = Usuario(
                         data.get(EMAIL__USUARIOS) as String,
                         Rol.valueOf(data.get(ROL__USUARIOS) as String),
-                        data.get(ACTIVADO__USUARIOS) as Boolean
+                        data.get(ACTIVADO__USUARIOS) as Boolean,
+                        data.get(TIENE_FOTO__USUARIOS) as Boolean,
+                        data.get(USERNAME__USUARIOS) as String
                     )
                 }
             }
@@ -137,6 +145,61 @@ object BDFirestore {
             .await()
     }
 
+    fun cambiarImageUser(image: Bitmap) {
+        val imgRef = storageRef.child("FotosPerfil/${usuario.email}.jpg")
+        imgRef.putBytes(Auxiliar.getBytes(image)!!)
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(TIENE_FOTO__USUARIOS, true)
+    }
+
+    fun getImg(email: String): Bitmap? {
+        var img: Bitmap? = null
+        runBlocking {
+            val job: Job = launch {
+                val data = image(email)
+                if (data != null) img = Auxiliar.getBitmap(data)
+            }
+            job.join()
+        }
+        return img
+    }
+
+    private suspend fun image(email: String): ByteArray? {
+        return try {
+            val imgRef = storageRef.child("FotosPerfil/$email.jpg")
+            val ONE_MEGABYTE: Long = 1024 * 1024
+            imgRef.getBytes(ONE_MEGABYTE).await()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    fun changeUsername(nuevoNombre: String) {
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(USERNAME__USUARIOS, nuevoNombre)
+    }
+
+    fun cambiarContraseña(newPass: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.updatePassword(newPass)
+    }
+
+    fun cambiarEmail(newEmail: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.updateEmail(newEmail)
+        val emailActual = usuario.email
+        db.collection(COL_USUARIOS).document(emailActual).get()
+            .addOnSuccessListener {
+                usuario.email = newEmail
+                val data = it.data!!
+                data[EMAIL__USUARIOS] = newEmail
+                db.collection(COL_EVENTOS).document(newEmail).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(emailActual).delete()
+                    }
+            }
+    }
+
     //************************ EVENTOS ************************
     val COL_EVENTOS = "eventos"
     val NOMBRE__EVENTOS = "nombre"
@@ -227,6 +290,13 @@ object BDFirestore {
         return evento!!
     }
 
+    private suspend fun queryEvento(idEvento: String): DocumentSnapshot {
+        return db.collection(COL_EVENTOS)
+            .document(idEvento)
+            .get()
+            .await()
+    }
+
     private fun destriparLugares(data: ArrayList<HashMap<String, *>>): ArrayList<Lugar> {
         val keys = Lugar.getCampos()
         val lugares = ArrayList<Lugar>(0)
@@ -254,13 +324,6 @@ object BDFirestore {
             asistentes.add(Asistente(a[keys[0]].toString(), a[keys[1]].toString()))
         }
         return asistentes
-    }
-
-    private suspend fun queryEvento(idEvento: String): DocumentSnapshot {
-        return db.collection(COL_EVENTOS)
-            .document(idEvento)
-            .get()
-            .await()
     }
 
     fun changeNameEvent(evento: Evento, nuevoNombre: String) {
@@ -320,4 +383,8 @@ object BDFirestore {
             .update(LUGARES__EVENTOS, evento.lugares)
     }
 
+    fun changeRol(nuevoRol: Rol) {
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(ROL__USUARIOS, nuevoRol)
+    }
 }

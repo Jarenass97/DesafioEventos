@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 import com.example.eventoscompartidos.R
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -88,7 +88,7 @@ class UsuariosAinvitarAdapter(
         }
 
         private fun cargarImagen(emailUsuario: String) {
-            val imgRef = storageRef.child("${BDFirestore.CARPETA_IMAGENES}/$emailUsuario.jpg")
+            val imgRef = storageRef.child("${BDFirebase.CARPETA_IMAGENES}/$emailUsuario.jpg")
             imgRef.getBytes(1024 * 1024)
                 .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
         }

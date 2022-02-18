@@ -14,7 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -154,7 +154,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 val lugar =
                     Lugar(nombre, Localizacion(loc.latitude, loc.longitude))
                 evento.addPlace(lugar)
-                BDFirestore.actualizarListaLugares(evento)
+                BDFirebase.actualizarListaLugares(evento)
                 view.dismiss()
             }
             .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->

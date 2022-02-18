@@ -11,7 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
-import assistant.BDFirestore
+import assistant.BDFirebase
 import com.example.eventoscompartidos.GestionEventoDetalle
 import com.example.eventoscompartidos.R
 import model.EventoItem
@@ -73,7 +73,7 @@ class EventosAdapter(
                 .setTitle(context.getString(R.string.strEliminar))
                 .setMessage(context.getString(R.string.strMensajeEliminarEvento, evento.nombre))
                 .setPositiveButton(context.getString(R.string.strAceptar)) { view, _ ->
-                    BDFirestore.deleteEvento(Auxiliar.idEvento(evento))
+                    BDFirebase.deleteEvento(Auxiliar.idEvento(evento))
                     eventosAdapter.delete(evento)
                     Toast.makeText(
                         context,

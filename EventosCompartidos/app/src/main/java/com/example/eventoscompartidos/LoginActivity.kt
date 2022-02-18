@@ -8,12 +8,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import assistant.Auxiliar
-import assistant.BDFirestore
-import assistant.BDFirestore.ACTIVADO__USUARIOS
-import assistant.BDFirestore.COL_USUARIOS
-import assistant.BDFirestore.EMAIL__USUARIOS
-import assistant.BDFirestore.IMAGEN__USUARIOS
-import assistant.BDFirestore.ROL__USUARIOS
+import assistant.BDFirebase
+import assistant.BDFirebase.ACTIVADO__USUARIOS
+import assistant.BDFirebase.COL_USUARIOS
+import assistant.BDFirebase.EMAIL__USUARIOS
+import assistant.BDFirebase.ROL__USUARIOS
+import assistant.BDFirebase.TIENE_FOTO__USUARIOS
+import assistant.BDFirebase.USERNAME__USUARIOS
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -21,15 +22,9 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.tasks.await
 import model.Rol
 import model.Usuario
 
@@ -105,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
         ) //Aquí no invocamos al edit, es solo para comprobar si tenemos datos en sesión.
         val email: String? = prefs.getString("email", null)
         if (email != null) {
-            val usuario: Usuario = BDFirestore.getUsuario(email)!!
+            val usuario: Usuario = BDFirebase.getUsuario(email)!!
             irMain(usuario)
         }
     }
@@ -146,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
     //*********************************************************************************
     private fun acceder(email: String) {
-        val usuario: Usuario? = BDFirestore.getUsuario(email)
+        val usuario: Usuario? = BDFirebase.getUsuario(email)
         if (usuario == null) {
             registrarUsuario(email)
         } else {
@@ -169,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
     private fun registrarUsuario(email: String) {
         var rol: Rol
         var act: Boolean
-        val hayRegistrados = BDFirestore.usuariosReg()
+        val hayRegistrados = BDFirebase.usuariosReg()
         rol = if (hayRegistrados) Rol.USUARIO
         else Rol.ADMINISTRADOR
         act = !hayRegistrados
@@ -177,7 +172,9 @@ class LoginActivity : AppCompatActivity() {
         val user = hashMapOf(
             EMAIL__USUARIOS to email,
             ROL__USUARIOS to rol,
-            ACTIVADO__USUARIOS to act
+            ACTIVADO__USUARIOS to act,
+            TIENE_FOTO__USUARIOS to false,
+            USERNAME__USUARIOS to ""
         )
         val db = Firebase.firestore
         db.collection(COL_USUARIOS).document(email)
