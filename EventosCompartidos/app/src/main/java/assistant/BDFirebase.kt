@@ -2,17 +2,14 @@ package assistant
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.util.Log
 import assistant.Auxiliar.idEvento
 import assistant.Auxiliar.usuario
-import com.google.android.gms.tasks.CancellationTokenSource
-import com.google.android.gms.tasks.OnFailureListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -20,7 +17,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import model.*
 import java.lang.Exception
-import java.util.concurrent.Executor
 
 object BDFirebase {
 
@@ -34,8 +30,8 @@ object BDFirebase {
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
     val ACTIVADO__USUARIOS = "activado"
-    val IMAGEN__USUARIOS = "imagen"
     val TIENE_FOTO__USUARIOS = "tieneFoto"
+    val USERNAME__USUARIOS = "username"
 
     fun getUsuario(email: String): Usuario? {
         var usuario: Usuario? = null
@@ -47,7 +43,8 @@ object BDFirebase {
                         data.get(EMAIL__USUARIOS) as String,
                         Rol.valueOf(data.get(ROL__USUARIOS) as String),
                         data.get(ACTIVADO__USUARIOS) as Boolean,
-                        data.get(TIENE_FOTO__USUARIOS) as Boolean
+                        data.get(TIENE_FOTO__USUARIOS) as Boolean,
+                        data.get(USERNAME__USUARIOS) as String
                     )
                 }
             }
@@ -152,7 +149,7 @@ object BDFirebase {
         val imgRef = storageRef.child("FotosPerfil/${usuario.email}.jpg")
         imgRef.putBytes(Auxiliar.getBytes(image)!!)
         db.collection(COL_USUARIOS).document(usuario.email)
-            .update(TIENE_FOTO__USUARIOS,true)
+            .update(TIENE_FOTO__USUARIOS, true)
     }
 
     fun getImg(email: String): Bitmap? {
@@ -175,6 +172,32 @@ object BDFirebase {
         } catch (e: Exception) {
             null
         }
+    }
+
+    fun changeUsername(nuevoNombre: String) {
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(USERNAME__USUARIOS, nuevoNombre)
+    }
+
+    fun cambiarContraseña(newPass: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.updatePassword(newPass)
+    }
+
+    fun cambiarEmail(newEmail: String) {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.updateEmail(newEmail)
+        val emailActual = usuario.email
+        db.collection(COL_USUARIOS).document(emailActual).get()
+            .addOnSuccessListener {
+                usuario.email = newEmail
+                val data = it.data!!
+                data[EMAIL__USUARIOS] = newEmail
+                db.collection(COL_EVENTOS).document(newEmail).set(data)
+                    .addOnSuccessListener {
+                        db.collection(COL_EVENTOS).document(emailActual).delete()
+                    }
+            }
     }
 
     //************************ EVENTOS ************************
@@ -360,5 +383,8 @@ object BDFirebase {
             .update(LUGARES__EVENTOS, evento.lugares)
     }
 
-
+    fun changeRol(nuevoRol: Rol) {
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(ROL__USUARIOS, nuevoRol)
+    }
 }

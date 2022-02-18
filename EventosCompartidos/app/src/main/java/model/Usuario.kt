@@ -12,6 +12,7 @@ data class Usuario(
     var rol: Rol,
     var activado: Boolean,
     var tieneFoto: Boolean,
+    var username: String,
     var img: Bitmap? = if (tieneFoto) BDFirebase.getImg(email) else null
 ) {
 

@@ -14,12 +14,14 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import assistant.Auxiliar
 import assistant.Auxiliar.usuario
@@ -29,6 +31,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_menu_admin.*
 import kotlinx.android.synthetic.main.fragment_perfil_usuario.*
+import model.Rol
 import java.io.FileNotFoundException
 import java.io.InputStream
 
@@ -47,7 +50,51 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
         btnCambiarImagenUsuario.setOnClickListener {
             cambiarFoto()
         }
+        btnChangeUsername.setOnClickListener {
+            cambiarUsername()
+        }
         if (usuario.img != null) imgUsuarioPerfil.setImageBitmap(usuario.img)
+        txtNombreUsuarioPerfil.text = getString(R.string.strUsername, usuario.username)
+        if (usuario.isAdmin()) {
+            rbAdmin.apply {
+                text = Rol.ADMINISTRADOR.toString()
+                isChecked = true
+            }
+            rbUser.text = Rol.USUARIO.toString()
+            rgRoles.setOnCheckedChangeListener { radioGroup, id ->
+                when (id) {
+                    rbAdmin.id -> {
+                        usuario.rol=Rol.ADMINISTRADOR
+                        BDFirebase.changeRol(Rol.ADMINISTRADOR)
+                    }
+                    rbUser.id->{
+                        usuario.rol=Rol.USUARIO
+                        BDFirebase.changeRol(Rol.USUARIO)
+                    }
+                }
+            }
+        } else lyRoles.isVisible = false
+    }
+
+    private fun cambiarUsername() {
+        val dialog = layoutInflater.inflate(R.layout.dialog_pide_string, null)
+        val edNombre = dialog.findViewById<EditText>(R.id.edStringDialog)
+        edNombre.setText(usuario.username)
+        AlertDialog.Builder(ventana)
+            .setTitle("Cambiar nombre")
+            .setView(dialog)
+            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                val nuevoNombre = edNombre.text.toString()
+                BDFirebase.changeUsername(nuevoNombre)
+                usuario.username = nuevoNombre
+                txtNombreUsuarioPerfil.text = getString(R.string.strUsername, usuario.username)
+                Toast.makeText(ventana, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                view.dismiss()
+            }
+            .setCancelable(true).create().show()
     }
 
     private fun cambiarFoto() {
