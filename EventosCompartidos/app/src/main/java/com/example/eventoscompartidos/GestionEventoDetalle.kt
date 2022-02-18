@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
+import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -79,7 +80,9 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                 .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
                     val emailUsuario = adapter.getSelected()
                     if (emailUsuario.isNotEmpty()) {
-                        evento.addAsistente(Asistente(emailUsuario))
+                        evento.addAsistente(
+                            Asistente(emailUsuario)
+                        )
                         Toast.makeText(
                             this,
                             getString(R.string.strInvitacionCorrecta, emailUsuario),
@@ -126,7 +129,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_evento_detalle, menu)
+        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_evento_detalle, menu)
         return super.onCreateOptionsMenu(menu)
     }
 

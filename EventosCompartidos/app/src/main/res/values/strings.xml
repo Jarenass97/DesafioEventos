@@ -55,4 +55,8 @@
     <string name="strGaleria">Gallery</string>
     <string name="strUsername">Username: %s</string>
     <string name="strUserRol">User rol:</string>
+    <string name="strListadoEventos">Events list</string>
+    <string name="strPerfil">Profile</string>
+    <string name="strGestionEventos">Event management</string>
+    <string name="strGestionUsuarios">Users management</string>
 </resources>

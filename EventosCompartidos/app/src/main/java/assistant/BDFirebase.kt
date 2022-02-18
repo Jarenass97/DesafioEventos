@@ -25,7 +25,7 @@ object BDFirebase {
     private val storageRef = Firebase.storage.reference
 
     //************************ USUARIOS ************************
-    val CARPETA_IMAGENES = "imgsUsuarios"
+    val CARPETA_IMAGENES = "FotosPerfil"
     val COL_USUARIOS = "usuarios"
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
@@ -198,6 +198,10 @@ object BDFirebase {
                         db.collection(COL_EVENTOS).document(emailActual).delete()
                     }
             }
+    }
+    fun changeRol(nuevoRol: Rol) {
+        db.collection(COL_USUARIOS).document(usuario.email)
+            .update(ROL__USUARIOS, nuevoRol)
     }
 
     //************************ EVENTOS ************************
@@ -383,8 +387,4 @@ object BDFirebase {
             .update(LUGARES__EVENTOS, evento.lugares)
     }
 
-    fun changeRol(nuevoRol: Rol) {
-        db.collection(COL_USUARIOS).document(usuario.email)
-            .update(ROL__USUARIOS, nuevoRol)
-    }
 }

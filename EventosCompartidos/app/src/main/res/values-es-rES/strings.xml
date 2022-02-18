@@ -50,4 +50,8 @@
     <string name="strGaleria">Galeria</string>
     <string name="strUsername">Nombre de usuario: %s</string>
     <string name="strUserRol">Rol de usuario:</string>
+    <string name="strListadoEventos">Listado de eventos</string>
+    <string name="strPerfil">Perfil</string>
+    <string name="strGestionEventos">Gestión de eventos</string>
+    <string name="strGestionUsuarios">Gestión de usuarios</string>
 </resources>

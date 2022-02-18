@@ -10,10 +10,7 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
@@ -27,6 +24,7 @@ import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import com.example.eventoscompartidos.R
+import com.example.eventoscompartidos.fragments.Usuario.ListadoEventosFragment
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import kotlinx.android.synthetic.main.fragment_menu_admin.*
@@ -64,11 +62,11 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
             rgRoles.setOnCheckedChangeListener { radioGroup, id ->
                 when (id) {
                     rbAdmin.id -> {
-                        usuario.rol=Rol.ADMINISTRADOR
+                        usuario.rol = Rol.ADMINISTRADOR
                         BDFirebase.changeRol(Rol.ADMINISTRADOR)
                     }
-                    rbUser.id->{
-                        usuario.rol=Rol.USUARIO
+                    rbUser.id -> {
+                        usuario.rol = Rol.USUARIO
                         BDFirebase.changeRol(Rol.USUARIO)
                     }
                 }

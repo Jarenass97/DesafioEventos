@@ -13,7 +13,7 @@ import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.example.eventoscompartidos.R
-import kotlinx.android.synthetic.main.fragment_gestion_eventos.*
+import kotlinx.android.synthetic.main.fragment_listado_eventos.*
 import model.Evento
 
 class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
@@ -26,7 +26,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_gestion_eventos, container, false)
+        return inflater.inflate(R.layout.fragment_listado_eventos, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

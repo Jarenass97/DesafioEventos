@@ -11,6 +11,8 @@ import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.fragments.Administrador.GestionEventosFragment
 import com.example.eventoscompartidos.fragments.Administrador.GestionUsuariosFragment
 import com.example.eventoscompartidos.fragments.Administrador.MenuInferiorAdminFragment
+import com.example.eventoscompartidos.fragments.Usuario.ListadoEventosFragment
+import com.example.eventoscompartidos.fragments.Usuario.MenuInferiorUsuarioFragment
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
@@ -29,10 +31,6 @@ class MainActivity : AppCompatActivity() {
         else cargarAppUsuario()
     }
 
-    private fun cargarMenuUser() {
-
-    }
-
     private fun cargarMenuAdmin() {
         fragment = MenuInferiorAdminFragment(this)
         replaceFragmentMenu(fragment)
@@ -40,14 +38,22 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun cargarAppAdmin() {
-        title = "Gestión de eventos"
+        title = getString(R.string.strGestionEventos)
         fragment = GestionEventosFragment(this)
         replaceFragmentVentana(fragment)
         cargarMenuAdmin()
     }
 
+    private fun cargarMenuUsuario() {
+        fragment = MenuInferiorUsuarioFragment(this)
+        replaceFragmentMenu(fragment)
+    }
+
     private fun cargarAppUsuario() {
-        cargarMenuUser()
+        title = getString(R.string.strListadoEventos)
+        fragment = ListadoEventosFragment(this)
+        replaceFragmentVentana(fragment)
+        cargarMenuUsuario()
     }
 
     private fun replaceFragmentVentana(fragment: Fragment) {
