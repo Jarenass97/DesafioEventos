@@ -67,6 +67,7 @@ class AsistentesAdapter(
             val imgRef = storageRef.child("${BDFirebase.CARPETA_IMAGENES}/${asistente.email}.jpg")
             imgRef.getBytes(1024 * 1024)
                 .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
+                .addOnFailureListener { imgUsuario.setImageResource(R.drawable.ic_usuario) }
         }
 
         private fun expulsar(asistente: Asistente, asistentesAdapter: AsistentesAdapter) {
