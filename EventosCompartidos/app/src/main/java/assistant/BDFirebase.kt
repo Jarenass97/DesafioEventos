@@ -199,6 +199,7 @@ object BDFirebase {
                     }
             }
     }
+
     fun changeRol(nuevoRol: Rol) {
         db.collection(COL_USUARIOS).document(usuario.email)
             .update(ROL__USUARIOS, nuevoRol)

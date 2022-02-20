@@ -3,7 +3,7 @@ package model
 import java.io.Serializable
 
 
-data class Asistente(var email: String, var horaLlegada: String? = null):Serializable{
+data class Asistente(var email: String, var horaLlegada: String = "") : Serializable {
     companion object {
         fun getCampos(): ArrayList<String> {
             val campos = ArrayList<String>(0)

@@ -65,7 +65,23 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
             showTimePickerDialog(edHoraEventoDetalle)
         }
         btnInvitarUsuario.setOnClickListener {
-            mostrarUsuarios()
+            if (usuario.isAdmin()) mostrarUsuarios()
+            else apuntarse()
+        }
+    }
+
+    private fun apuntarse() {
+        if (evento.estoyApuntado())
+            Toast.makeText(
+                this,
+                getString(R.string.strYaApuntado),
+                Toast.LENGTH_SHORT
+            ).show()
+        else {
+            evento.addAsistente(Asistente(usuario.email))
+            Toast.makeText(this, getString(R.string.strApuntado, evento.nombre), Toast.LENGTH_SHORT)
+                .show()
+            adaptadorAsistentes.notifyDataSetChanged()
         }
     }
 

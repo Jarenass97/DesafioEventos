@@ -55,4 +55,6 @@
     <string name="strGestionEventos">Gestión de eventos</string>
     <string name="strGestionUsuarios">Gestión de usuarios</string>
     <string name="strEligeRol">Elige tu rol de acceso</string>
+    <string name="strApuntado">Te has apuntado al evento \"%s\"</string>
+    <string name="strYaApuntado">Ya estás apuntado a este evento</string>
 </resources>

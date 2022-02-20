@@ -1,5 +1,7 @@
 package model
 
+import assistant.Auxiliar
+import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import com.google.android.gms.maps.model.LatLng
 import java.io.Serializable
@@ -28,6 +30,10 @@ data class Evento(
 
     fun addPlace(lugar: Lugar) {
         lugares.add(lugar)
+    }
+
+    fun estoyApuntado(): Boolean {
+        return asistentes.contains(Asistente(usuario.email))
     }
 }
 

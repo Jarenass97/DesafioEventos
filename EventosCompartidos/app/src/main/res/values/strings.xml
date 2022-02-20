@@ -60,4 +60,6 @@
     <string name="strGestionEventos">Event management</string>
     <string name="strGestionUsuarios">Users management</string>
     <string name="strEligeRol">Choose your access rol</string>
+    <string name="strApuntado">Have signed up for the event \"%s\"</string>
+    <string name="strYaApuntado">You are already registered for this event</string>
 </resources>
