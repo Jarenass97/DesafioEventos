@@ -54,4 +54,5 @@
     <string name="strPerfil">Perfil</string>
     <string name="strGestionEventos">Gestión de eventos</string>
     <string name="strGestionUsuarios">Gestión de usuarios</string>
+    <string name="strEligeRol">Elige tu rol de acceso</string>
 </resources>

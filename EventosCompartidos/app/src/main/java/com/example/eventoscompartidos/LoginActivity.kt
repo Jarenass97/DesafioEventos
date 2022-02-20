@@ -145,13 +145,32 @@ class LoginActivity : AppCompatActivity() {
         if (usuario == null) {
             registrarUsuario(email)
         } else {
-            if (usuario.activado) {
-                irMain(usuario)
-                Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, getString(R.string.strInactivo), Toast.LENGTH_SHORT).show()
+            when {
+                usuario.isAdmin() -> preguntarRol(usuario)
+                usuario.activado -> {
+                    irMain(usuario)
+                    Toast.makeText(this, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
+                }
+                else -> {
+                    Toast.makeText(this, getString(R.string.strInactivo), Toast.LENGTH_SHORT).show()
+                }
             }
         }
+    }
+
+    private fun preguntarRol(usuario: Usuario) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strEligeRol))
+            .setPositiveButton(Rol.ADMINISTRADOR.toString()) { view, _ ->
+                usuario.rol = Rol.ADMINISTRADOR
+                irMain(usuario)
+                view.dismiss()
+            }.setNegativeButton(Rol.USUARIO.toString()) { view, _ ->
+                usuario.rol = Rol.USUARIO
+                irMain(usuario)
+                view.dismiss()
+            }
+            .setCancelable(true).create().show()
     }
 
     private fun irMain(usuario: Usuario) {

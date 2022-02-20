@@ -59,4 +59,5 @@
     <string name="strPerfil">Profile</string>
     <string name="strGestionEventos">Event management</string>
     <string name="strGestionUsuarios">Users management</string>
+    <string name="strEligeRol">Choose your access rol</string>
 </resources>

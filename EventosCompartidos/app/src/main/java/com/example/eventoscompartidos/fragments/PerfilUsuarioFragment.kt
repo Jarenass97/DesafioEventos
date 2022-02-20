@@ -1,7 +1,6 @@
 package com.example.eventoscompartidos.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -9,7 +8,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.*
 import android.widget.EditText
 import android.widget.ImageView
@@ -23,11 +21,8 @@ import androidx.fragment.app.Fragment
 import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import assistant.BDFirebase
+import com.example.eventoscompartidos.MainActivity
 import com.example.eventoscompartidos.R
-import com.example.eventoscompartidos.fragments.Usuario.ListadoEventosFragment
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.ktx.storage
-import kotlinx.android.synthetic.main.fragment_menu_admin.*
 import kotlinx.android.synthetic.main.fragment_perfil_usuario.*
 import model.Rol
 import java.io.FileNotFoundException
@@ -61,17 +56,18 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
             rbUser.text = Rol.USUARIO.toString()
             rgRoles.setOnCheckedChangeListener { radioGroup, id ->
                 when (id) {
-                    rbAdmin.id -> {
-                        usuario.rol = Rol.ADMINISTRADOR
-                        BDFirebase.changeRol(Rol.ADMINISTRADOR)
-                    }
-                    rbUser.id -> {
-                        usuario.rol = Rol.USUARIO
-                        BDFirebase.changeRol(Rol.USUARIO)
-                    }
+                    rbAdmin.id -> usuario.rol = Rol.ADMINISTRADOR
+                    rbUser.id -> usuario.rol = Rol.USUARIO
                 }
+                cambiarRol()
             }
         } else lyRoles.isVisible = false
+    }
+
+    private fun cambiarRol() {
+        val intent = Intent(ventana, MainActivity::class.java)
+        startActivity(intent)
+        ventana.finish()
     }
 
     private fun cambiarUsername() {
