@@ -58,15 +58,22 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
         cargarMapa()
         cargarDatos()
-        edFechaEventoDetalle.setOnClickListener {
-            showDatePickerDialog(edFechaEventoDetalle)
-        }
-        edHoraEventoDetalle.setOnClickListener {
-            showTimePickerDialog(edHoraEventoDetalle)
+        if (usuario.isAdmin()) {
+            edFechaEventoDetalle.setOnClickListener {
+                showDatePickerDialog(edFechaEventoDetalle)
+            }
+            edHoraEventoDetalle.setOnClickListener {
+                showTimePickerDialog(edHoraEventoDetalle)
+            }
         }
         btnInvitarUsuario.setOnClickListener {
             if (usuario.isAdmin()) mostrarUsuarios()
             else apuntarse()
+        }
+        if (!usuario.isAdmin()) btnChangePuntoReunion.text = getString(R.string.addPlaces)
+        btnChangePuntoReunion.setOnClickListener {
+            if (usuario.isAdmin()) cambiarUbicacion()
+            else addPlace()
         }
     }
 
@@ -275,7 +282,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
-    fun cambiarUbicacion(view: View) {
+    fun cambiarUbicacion() {
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("opcion", MapsOptions.CHANGE_REUNION)
         startActivityForResult(intent, Auxiliar.CODE_CHANGE_UBICATION)

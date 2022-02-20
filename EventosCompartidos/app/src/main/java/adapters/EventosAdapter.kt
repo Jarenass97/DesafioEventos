@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
+import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import com.example.eventoscompartidos.GestionEventoDetalle
 import com.example.eventoscompartidos.R
@@ -62,9 +63,11 @@ class EventosAdapter(
                 intent.putExtra(context.getString(R.string.strEvento), Auxiliar.idEvento(evento))
                 context.startActivity(intent)
             }
-            itemView.setOnLongClickListener {
-                eliminar(evento, eventosAdapter)
-                true
+            if (usuario.isAdmin()) {
+                itemView.setOnLongClickListener {
+                    eliminar(evento, eventosAdapter)
+                    true
+                }
             }
         }
 

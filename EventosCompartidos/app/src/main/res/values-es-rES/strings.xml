@@ -57,4 +57,5 @@
     <string name="strEligeRol">Elige tu rol de acceso</string>
     <string name="strApuntado">Te has apuntado al evento \"%s\"</string>
     <string name="strYaApuntado">Ya estás apuntado a este evento</string>
+    <string name="addPlaces">Añadir lugares</string>
 </resources>
