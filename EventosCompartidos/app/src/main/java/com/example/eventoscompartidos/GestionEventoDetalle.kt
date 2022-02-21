@@ -45,7 +45,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var evento: Evento
     lateinit var map: GoogleMap
     private val LOCATION_REQUEST_CODE: Int = 0
-    lateinit var myUbication: LatLng
+    var myUbication: LatLng= LatLng(40.4165,-3.70256)
     lateinit var adaptadorAsistentes: AsistentesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
