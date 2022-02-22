@@ -39,5 +39,10 @@ data class Evento(
     fun sinPuntoReunion(): Boolean {
         return puntoReunion == null
     }
+
+    fun delLugar(lugar: Lugar) {
+        lugares.remove(lugar)
+        BDFirebase.actualizarListaLugares(this)
+    }
 }
 

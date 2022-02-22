@@ -2,6 +2,7 @@ package assistant
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import assistant.Auxiliar.idEvento
 import assistant.Auxiliar.usuario
 import com.google.firebase.auth.FirebaseAuth
@@ -306,9 +307,30 @@ object BDFirebase {
         val keys = Lugar.getCampos()
         val lugares = ArrayList<Lugar>(0)
         for (d in data) {
-            lugares.add(Lugar(d[keys[0]] as String, location(d[keys[1]] as HashMap<String, *>)))
+            lugares.add(
+                Lugar(
+                    d[keys[0]] as String,
+                    location(d[keys[1]] as HashMap<String, *>),
+                    destriparComentarios(d)
+                )
+            )
         }
         return lugares
+    }
+
+    private fun destriparComentarios(d: HashMap<String, *>): ArrayList<Comentario> {
+        val keys = Lugar.getCampos()
+        val keysComments = Comentario.getCampos()
+        val comentarios = ArrayList<Comentario>(0)
+        for (c in d[keys[2]] as ArrayList<HashMap<String, *>>) {
+            comentarios.add(
+                Comentario(
+                    c[keysComments[0]] as String,
+                    c[keysComments[1]] as String
+                )
+            )
+        }
+        return comentarios
     }
 
     private fun location(loc: HashMap<String, *>): Localizacion {
@@ -386,6 +408,11 @@ object BDFirebase {
     fun actualizarListaLugares(evento: Evento) {
         db.collection(COL_EVENTOS).document(idEvento(evento))
             .update(LUGARES__EVENTOS, evento.lugares)
+    }
+
+    fun actualizarComentariosLugar(lugar: Lugar,evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(LUGARES__EVENTOS,evento.lugares)
     }
 
 }

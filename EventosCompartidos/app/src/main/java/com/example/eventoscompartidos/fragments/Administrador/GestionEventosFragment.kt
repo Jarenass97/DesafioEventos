@@ -38,13 +38,13 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_admin_events_fragment, menu)
+        inflater.inflate(R.menu.menu_add, menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.miAddEvent -> crearEvento()
+            R.id.miAdd -> crearEvento()
         }
         return super.onOptionsItemSelected(item)
     }

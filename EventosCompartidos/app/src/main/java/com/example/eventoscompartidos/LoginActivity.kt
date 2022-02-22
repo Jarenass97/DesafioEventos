@@ -89,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
             val signInIntent = googleClient.signInIntent
             startActivityForResult(signInIntent, RC_SIGN_IN)
         }
-        session()
+        //session()
     }
 
     //******************************** Para la sesión ***************************

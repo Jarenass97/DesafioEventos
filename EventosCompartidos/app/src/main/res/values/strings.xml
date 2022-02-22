@@ -63,4 +63,5 @@
     <string name="strApuntado">Have signed up for the event \"%s\"</string>
     <string name="strYaApuntado">You are already registered for this event</string>
     <string name="addPlaces">Add places</string>
+    <string name="strMsgEliminarLugar">Are you sure to delete \"%s\"?</string>
 </resources>
