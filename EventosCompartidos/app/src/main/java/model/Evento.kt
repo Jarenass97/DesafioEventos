@@ -35,5 +35,9 @@ data class Evento(
     fun estoyApuntado(): Boolean {
         return asistentes.contains(Asistente(usuario.email))
     }
+
+    fun sinPuntoReunion(): Boolean {
+        return puntoReunion == null
+    }
 }
 

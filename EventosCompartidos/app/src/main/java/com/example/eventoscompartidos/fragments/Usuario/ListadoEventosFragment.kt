@@ -8,8 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import assistant.BDFirebase
 import com.example.eventoscompartidos.R
-import com.example.eventoscompartidos.fragments.PerfilUsuarioFragment
-import kotlinx.android.synthetic.main.fragment_listado_eventos.*
+import kotlinx.android.synthetic.main.fragment_listado.*
 
 class ListadoEventosFragment(val ventana: AppCompatActivity) : Fragment() {
 
@@ -20,15 +19,15 @@ class ListadoEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_listado_eventos, container, false)
+        return inflater.inflate(R.layout.fragment_listado, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvGestionEventos.setHasFixedSize(true)
-        rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
+        rvListado.setHasFixedSize(true)
+        rvListado.layoutManager = LinearLayoutManager(ventana)
         adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
-        rvGestionEventos.adapter = adaptador
+        rvListado.adapter = adaptador
     }
 
 }

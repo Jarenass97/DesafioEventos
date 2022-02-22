@@ -90,10 +90,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     }
 
     private fun toMarkPlaces() {
-        map.addMarker(
-            MarkerOptions().position(evento.localizacionPuntoReunion()).title(evento.nombre)
-                .snippet("${evento.fecha} ${evento.hora}")
-        )
+        if (!evento.sinPuntoReunion()) {
+            map.addMarker(
+                MarkerOptions().position(evento.localizacionPuntoReunion()).title(evento.nombre)
+                    .snippet("${evento.fecha} ${evento.hora}")
+            )
+        }
         for (lugar in evento.lugares) {
             map.addMarker(
                 MarkerOptions().position(lugar.latLng()).title(lugar.nombre).icon(

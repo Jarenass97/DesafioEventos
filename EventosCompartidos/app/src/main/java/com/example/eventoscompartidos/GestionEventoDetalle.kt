@@ -12,10 +12,8 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -73,7 +71,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         if (!usuario.isAdmin()) btnChangePuntoReunion.text = getString(R.string.addPlaces)
         btnChangePuntoReunion.setOnClickListener {
             if (usuario.isAdmin()) cambiarUbicacion()
-            else addPlace()
+            else irLugares()
         }
     }
 
@@ -159,16 +157,22 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.miEditName -> editarNombre()
-            R.id.miAddPlaces -> addPlace()
+            R.id.miAddPlaces -> addPlaces()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addPlace() {
+    private fun irLugares() {
+        val intent = Intent(this, LugaresActivity::class.java)
+        intent.putExtra("evento", evento)
+        startActivityForResult(intent, Auxiliar.CODE_PLACES)
+    }
+
+    fun addPlaces(){
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("opcion", MapsOptions.ADD_PLACES)
         intent.putExtra("evento", evento)
-        startActivityForResult(intent, Auxiliar.CODE_ADD_PLACES)
+        startActivityForResult(intent, Auxiliar.CODE_PLACES)
     }
 
     private fun editarNombre() {
@@ -202,7 +206,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         enableMyLocation()
-        if (evento.puntoReunion != null) {
+        if (!evento.sinPuntoReunion()) {
             val pos = evento.localizacionPuntoReunion()
             map.addMarker(
                 MarkerOptions().position(pos).title(evento.nombre)
@@ -307,7 +311,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                     cargarMapa()
                 }
             }
-            Auxiliar.CODE_ADD_PLACES -> evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
+            Auxiliar.CODE_PLACES -> evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

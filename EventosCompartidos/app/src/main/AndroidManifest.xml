@@ -21,6 +21,9 @@
             android:name=".MapsActivity"
             android:exported="false"/>
         <activity
+            android:name=".LugaresActivity"
+            android:exported="false"/>
+        <activity
             android:name=".GestionEventoDetalle"
             android:exported="false" />
         <activity
