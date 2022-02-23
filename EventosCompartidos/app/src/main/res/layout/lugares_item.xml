@@ -5,18 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/btnComentariosLugar"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:layout_marginEnd="10dp"
-        app:layout_constraintBottom_toBottomOf="@+id/txtNombreLugarItem"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.978"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/txtNombreLugarItem"
-        app:srcCompat="@drawable/ic_comment" />
-
     <TextView
         android:id="@+id/txtNombreLugarItem"
         style="@style/textViews"
@@ -28,7 +16,7 @@
         android:layout_marginBottom="20dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/txtNumComentsLugarItem"
+        app:layout_constraintEnd_toStartOf="@+id/btnComentariosLugar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -44,17 +32,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0" />
 
-    <TextView
-        android:id="@+id/txtNumComentsLugarItem"
-        style="@style/textViews"
+    <LinearLayout
+        android:id="@+id/btnComentariosLugar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="5dp"
-        android:text="999"
-        app:layout_constraintBottom_toBottomOf="@+id/btnComentariosLugar"
-        app:layout_constraintEnd_toStartOf="@+id/btnComentariosLugar"
+        android:layout_marginEnd="20dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnComentariosLugar" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/txtNumComentsLugarItem"
+            style="@style/textViews"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="5dp"
+            android:gravity="center|right"
+            android:text="999" />
+
+        <ImageView
+            android:id="@+id/commentIco"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            app:srcCompat="@drawable/ic_comment" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -43,7 +43,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var evento: Evento
     lateinit var map: GoogleMap
     private val LOCATION_REQUEST_CODE: Int = 0
-    var myUbication: LatLng= LatLng(40.4165,-3.70256)
+    var myUbication: LatLng = LatLng(40.4165, -3.70256)
     lateinit var adaptadorAsistentes: AsistentesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +68,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
             if (usuario.isAdmin()) mostrarUsuarios()
             else apuntarse()
         }
-        if (!usuario.isAdmin()) btnChangePuntoReunion.text = getString(R.string.addPlaces)
+        if (!usuario.isAdmin()) btnChangePuntoReunion.text = getString(R.string.strVerLugares)
         btnChangePuntoReunion.setOnClickListener {
             if (usuario.isAdmin()) cambiarUbicacion()
             else irLugares()
@@ -168,7 +168,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         startActivityForResult(intent, Auxiliar.CODE_PLACES)
     }
 
-    fun addPlaces(){
+    fun addPlaces() {
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("opcion", MapsOptions.ADD_PLACES)
         intent.putExtra("evento", evento)

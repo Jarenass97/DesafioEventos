@@ -16,9 +16,8 @@ data class Lugar(
         val num = if (comentarios.isEmpty()) {
             1
         } else {
-            val lastCom = comentarios.last()
-            val com = lastCom.id.split('-')
-            com[1].toInt() + 1
+            val lastCom = comentarios.sortedBy { it.id }.last().id.split('-')
+            lastCom[1].toInt() + 1
         }
         return "$nombre-$num"
     }
@@ -27,6 +26,8 @@ data class Lugar(
         comentarios.add(comentario)
         BDFirebase.actualizarComentariosLugar(this, evento)
     }
+
+    fun numComentarios(): Int = comentarios.size
 
     companion object {
         fun getCampos(): ArrayList<String> {

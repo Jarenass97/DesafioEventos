@@ -59,4 +59,7 @@
     <string name="strYaApuntado">Ya estás apuntado a este evento</string>
     <string name="addPlaces">Añadir lugares</string>
     <string name="strMsgEliminarLugar">¿Estás seguro de eliminar \"%s\"?</string>
+    <string name="strConfirmarCambioUbicacionLugar">¿Está seguro de establecer este punto como nueva ubicación de \"%s\"?</string>
+    <string name="strVerLugares">Ver lugares</string>
+    <string name="strCambioLocLugar">Ubicación de %s alterada</string>
 </resources>

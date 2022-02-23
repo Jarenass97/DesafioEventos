@@ -3,7 +3,6 @@ package com.example.eventoscompartidos
 import adapters.LugaresAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +23,7 @@ class LugaresActivity : AppCompatActivity() {
 
         val bun: Bundle = intent.extras!!
         evento = bun.getSerializable("evento") as Evento
+        title = evento.nombre
         rvListado.setHasFixedSize(true)
         rvListado.layoutManager = LinearLayoutManager(this)
         adaptador = LugaresAdapter(this, evento.lugares, evento)

@@ -64,4 +64,7 @@
     <string name="strYaApuntado">You are already registered for this event</string>
     <string name="addPlaces">Add places</string>
     <string name="strMsgEliminarLugar">Are you sure to delete \"%s\"?</string>
+    <string name="strConfirmarCambioUbicacionLugar">Are you sure to set this point as the new \"%s\" location?</string>
+    <string name="strVerLugares">See places</string>
+    <string name="strCambioLocLugar">Altered %s location</string>
 </resources>

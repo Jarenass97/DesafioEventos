@@ -44,5 +44,10 @@ data class Evento(
         lugares.remove(lugar)
         BDFirebase.actualizarListaLugares(this)
     }
+
+    fun modifyPlace(lugar: Lugar, newLugar: Lugar) {
+        lugares.remove(lugar)
+        lugares.add(newLugar)
+    }
 }
 
