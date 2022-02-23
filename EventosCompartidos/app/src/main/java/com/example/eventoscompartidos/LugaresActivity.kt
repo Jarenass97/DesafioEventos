@@ -56,6 +56,11 @@ class LugaresActivity : AppCompatActivity() {
                 adaptador = LugaresAdapter(this, evento.lugares, evento)
                 rvListado.adapter = adaptador
             }
+            Auxiliar.CODE_COMMENTS -> {
+                evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
+                adaptador = LugaresAdapter(this, evento.lugares, evento)
+                rvListado.adapter = adaptador
+            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

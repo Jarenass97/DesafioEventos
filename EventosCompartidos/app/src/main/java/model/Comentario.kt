@@ -2,7 +2,7 @@ package model
 
 import java.io.Serializable
 
-data class Comentario(var comment: String, var id: String):Serializable {
+data class Comentario(var comment: String, var id: String, var usuario: String) : Serializable {
     companion object {
         fun getCampos(): ArrayList<String> {
             val campos = ArrayList<String>(0)

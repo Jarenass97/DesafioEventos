@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream
 object Auxiliar {
     val CODE_CHANGE_UBICATION = 1
     val CODE_PLACES = 2
+    val CODE_COMMENTS = 3
     val LOCATION_REQUEST_CODE = 0
     val CODE_GALLERY = 1887
     val CODE_CAMERA = 1888

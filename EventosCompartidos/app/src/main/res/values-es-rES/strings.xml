@@ -62,4 +62,8 @@
     <string name="strConfirmarCambioUbicacionLugar">¿Está seguro de establecer este punto como nueva ubicación de \"%s\"?</string>
     <string name="strVerLugares">Ver lugares</string>
     <string name="strCambioLocLugar">Ubicación de %s alterada</string>
+    <string name="strEscribeComentario">Escribe tu comentario</string>
+    <string name="strTituloComentarios">Comentarios para %s</string>
+    <string name="strNuevoComentario">Nuevo comentario para %s</string>
+    <string name="strComentarioIncompleto">Imposible comentar sin imagen o con el comentario vacío</string>
 </resources>

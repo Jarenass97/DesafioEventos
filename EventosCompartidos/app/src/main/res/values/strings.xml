@@ -67,4 +67,8 @@
     <string name="strConfirmarCambioUbicacionLugar">Are you sure to set this point as the new \"%s\" location?</string>
     <string name="strVerLugares">See places</string>
     <string name="strCambioLocLugar">Altered %s location</string>
+    <string name="strEscribeComentario">Write your comment</string>
+    <string name="strTituloComentarios">Comments for %s</string>
+    <string name="strNuevoComentario">New comment for %s</string>
+    <string name="strComentarioIncompleto">Impossible to comment without image or with empty comment</string>
 </resources>

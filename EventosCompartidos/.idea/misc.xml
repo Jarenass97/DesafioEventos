@@ -8,10 +8,13 @@
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/drawable/ic_image.xml" value="0.1" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/drawable/ic_inactivo.xml" value="0.137" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/drawable/ic_usuarios.xml" value="0.137" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_comentario_creater.xml" value="0.17" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_comentarios.xml" value="0.1082427536231884" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_gestion_evento_detalle.xml" value="0.25" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_login.xml" value="0.21" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_main.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/activity_maps.xml" value="0.17074275362318841" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/comentario_item.xml" value="0.17" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/dialog_edit_nombre_evento.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/eventos_creater.xml" value="0.17074275362318841" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/layout/fragment_gestion_eventos.xml" value="0.17074275362318841" />
@@ -28,6 +31,7 @@
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_admin_actions.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_admin_events_fragment.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_evento_detalle.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_save.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_usuarios.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/menu/menu_usuarios_perfil.xml" value="0.20416666666666666" />
         <entry key="..\:/Users/jorge/Desktop/Jorge Arenas/DAM2/PMDM/Android/Ejercicios/DesafioEventos/EventosCompartidos/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.137" />

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
+import com.example.eventoscompartidos.ComentariosActivity
 import com.example.eventoscompartidos.MapsActivity
 import com.example.eventoscompartidos.R
 import model.Comentario
@@ -65,11 +66,15 @@ class LugaresAdapter(
                 true
             }
             btnComments.setOnClickListener {
-                lugar.addComment(
-                    Comentario("comentario de prueba", lugar.idNextComment()),
-                    lugaresAdapter.evento
-                )
+                irComentarios(lugar,lugaresAdapter)
             }
+        }
+
+        private fun irComentarios(lugar: Lugar, lugaresAdapter: LugaresAdapter) {
+            val intent = Intent(context, ComentariosActivity::class.java)
+            intent.putExtra("lugar", lugar)
+            intent.putExtra("evento", lugaresAdapter.evento)
+            context.startActivityForResult(intent,Auxiliar.CODE_COMMENTS)
         }
 
         private fun modifyPlace(lugar: Lugar, lugaresAdapter: LugaresAdapter) {

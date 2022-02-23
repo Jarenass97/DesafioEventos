@@ -326,7 +326,8 @@ object BDFirebase {
             comentarios.add(
                 Comentario(
                     c[keysComments[0]] as String,
-                    c[keysComments[1]] as String
+                    c[keysComments[1]] as String,
+                    c[keysComments[2]] as String
                 )
             )
         }
@@ -410,9 +411,14 @@ object BDFirebase {
             .update(LUGARES__EVENTOS, evento.lugares)
     }
 
-    fun actualizarComentariosLugar(lugar: Lugar,evento: Evento) {
+    fun actualizarComentariosLugar(evento: Evento) {
         db.collection(COL_EVENTOS).document(idEvento(evento))
             .update(LUGARES__EVENTOS,evento.lugares)
+    }
+
+    fun cambiarImageComment(image: Bitmap,idComment:String) {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        imgRef.putBytes(Auxiliar.getBytes(image)!!)
     }
 
 }
