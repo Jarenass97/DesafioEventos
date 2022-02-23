@@ -83,6 +83,7 @@ class ComentarioCreaterActivity : AppCompatActivity() {
             Comentario(edComentario.text.toString(), lugar.idNextComment(), usuario.email)
         lugar.addComment(comentario, evento)
         BDFirebase.cambiarImageComment(image!!, comentario.id)
+        finish()
     }
 
     private fun cambiarFoto() {

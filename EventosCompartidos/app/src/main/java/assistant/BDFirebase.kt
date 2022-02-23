@@ -439,4 +439,9 @@ object BDFirebase {
         return imgRef.getBytes(ONE_MEGABYTE).await()
     }
 
+    fun deleteImageComment(idComment: String) {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        imgRef.delete()
+    }
+
 }

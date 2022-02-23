@@ -40,6 +40,13 @@ data class Lugar(
 
     fun numComentarios(): Int = comentarios.size
 
+    fun delComment(comentario: Comentario, evento: Evento) {
+        val lug = thisPLace()
+        comentarios.remove(comentario)
+        evento.modifyPlace(lug, this)
+        BDFirebase.actualizarComentariosLugar(evento)
+    }
+
     companion object {
         fun getCampos(): ArrayList<String> {
             val campos = ArrayList<String>(0)

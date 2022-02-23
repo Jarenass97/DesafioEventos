@@ -1,14 +1,18 @@
 package com.example.eventoscompartidos
 
 import adapters.ComentariosAdapter
+import adapters.LugaresAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.recyclerview.widget.LinearLayoutManager
 import assistant.Auxiliar
+import assistant.BDFirebase
 import kotlinx.android.synthetic.main.activity_comentarios.*
+import kotlinx.android.synthetic.main.fragment_listado.*
 import model.Evento
 import model.Lugar
 
@@ -25,7 +29,7 @@ class ComentariosActivity : AppCompatActivity() {
         lugar = bun.getSerializable("lugar") as Lugar
         title = getString(R.string.strTituloComentarios, lugar.nombre)
 
-        adaptador = ComentariosAdapter(this, evento, lugar)
+        adaptador = ComentariosAdapter(this, evento, lugar, lugar.comentarios)
         rvComentarios.setHasFixedSize(true)
         rvComentarios.layoutManager = LinearLayoutManager(this)
         rvComentarios.adapter = adaptador
@@ -47,6 +51,14 @@ class ComentariosActivity : AppCompatActivity() {
         val intent = Intent(this, ComentarioCreaterActivity::class.java)
         intent.putExtra("lugar", lugar)
         intent.putExtra("evento", evento)
-        startActivityForResult(intent, Auxiliar.CODE_COMMENTS)
+        startActivity(intent)
+    }
+
+    override fun onResume() {
+        evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
+        lugar = evento.getLugar(lugar)!!
+        adaptador = ComentariosAdapter(this, evento, lugar, lugar.comentarios)
+        rvComentarios.adapter = adaptador
+        super.onResume()
     }
 }

@@ -1,5 +1,6 @@
 package model
 
+import android.util.Log
 import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import assistant.BDFirebase
@@ -48,6 +49,13 @@ data class Evento(
     fun modifyPlace(lugar: Lugar, newLugar: Lugar) {
         lugares.remove(lugar)
         lugares.add(newLugar)
+    }
+
+    fun getLugar(lugar: Lugar): Lugar? {
+        for (l in lugares){
+            if(l.nombre==lugar.nombre) return l
+        }
+        return null
     }
 }
 
