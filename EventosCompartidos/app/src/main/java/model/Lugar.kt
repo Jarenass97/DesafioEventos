@@ -24,18 +24,18 @@ data class Lugar(
     }
 
     fun addComment(comentario: Comentario, evento: Evento) {
-        val lug=thisPLace()
+        val lug = thisPLace()
         comentarios.add(comentario)
-        evento.modifyPlace(lug,this)
+        evento.modifyPlace(lug, this)
         BDFirebase.actualizarComentariosLugar(evento)
     }
 
     private fun thisPLace(): Lugar {
-        val coments=ArrayList<Comentario>(0)
-        for(c in comentarios){
+        val coments = ArrayList<Comentario>(0)
+        for (c in comentarios) {
             coments.add(c)
         }
-        return Lugar(nombre,localizacion, coments)
+        return Lugar(nombre, localizacion, coments)
     }
 
     fun numComentarios(): Int = comentarios.size

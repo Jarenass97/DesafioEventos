@@ -15,19 +15,20 @@ import com.example.eventoscompartidos.R
 import model.Comentario
 import model.Evento
 import model.Lugar
+import model.Usuario
 
 class ComentariosAdapter(
     var context: AppCompatActivity,
-    var comentarios: ArrayList<Comentario>,
     val evento: Evento,
-    val lugar: Lugar
+    val lugar: Lugar,
+    var comentarios: ArrayList<Comentario> = lugar.comentarios
 ) :
     RecyclerView.Adapter<ComentariosAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return ViewHolder(
-            layoutInflater.inflate(R.layout.lugares_item, parent, false),
+            layoutInflater.inflate(R.layout.comentario_item, parent, false),
             context
         )
     }
@@ -57,16 +58,17 @@ class ComentariosAdapter(
             pos: Int,
             comentariosAdapter: ComentariosAdapter
         ) {
-            val img = getImgUser(comentario.usuario)
-            if (img != null) imgUser.setImageBitmap(img)
+            val user = BDFirebase.getUsuario(comentario.usuario)
+            if (user != null) {
+                val img = user.img
+                if (img != null) imgUser.setImageBitmap(img)
+                txtNombreUser.text = if(!user.sinUsername()) user.username else user.email
+            }else txtNombreUser.text = comentario.usuario
+            imgComentario.setImageBitmap(BDFirebase.getImgComment(comentario))
+            txtComment.text=comentario.comment
             /*btnDelete.setOnClickListener {
                 eliminarComentario(comentario,comentariosAdapter)
             }*/
-        }
-
-        private fun getImgUser(usuario: String): Bitmap? {
-            val user = BDFirebase.getUsuario(usuario)
-            return user?.img
         }
 
         private fun eliminarComentario(

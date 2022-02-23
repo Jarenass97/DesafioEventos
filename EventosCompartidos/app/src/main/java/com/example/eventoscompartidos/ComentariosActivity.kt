@@ -1,5 +1,6 @@
 package com.example.eventoscompartidos
 
+import adapters.ComentariosAdapter
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,6 +15,7 @@ import model.Lugar
 class ComentariosActivity : AppCompatActivity() {
     lateinit var evento: Evento
     lateinit var lugar: Lugar
+    lateinit var adaptador: ComentariosAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_comentarios)
@@ -23,9 +25,10 @@ class ComentariosActivity : AppCompatActivity() {
         lugar = bun.getSerializable("lugar") as Lugar
         title = getString(R.string.strTituloComentarios, lugar.nombre)
 
+        adaptador = ComentariosAdapter(this, evento, lugar)
         rvComentarios.setHasFixedSize(true)
         rvComentarios.layoutManager = LinearLayoutManager(this)
-
+        rvComentarios.adapter = adaptador
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

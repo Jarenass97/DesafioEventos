@@ -21,4 +21,6 @@ data class Usuario(
         img = image
         tieneFoto = true
     }
+
+    fun sinUsername(): Boolean = username.isEmpty()
 }

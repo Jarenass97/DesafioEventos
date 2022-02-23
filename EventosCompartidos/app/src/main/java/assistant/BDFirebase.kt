@@ -413,12 +413,30 @@ object BDFirebase {
 
     fun actualizarComentariosLugar(evento: Evento) {
         db.collection(COL_EVENTOS).document(idEvento(evento))
-            .update(LUGARES__EVENTOS,evento.lugares)
+            .update(LUGARES__EVENTOS, evento.lugares)
     }
 
-    fun cambiarImageComment(image: Bitmap,idComment:String) {
+    fun cambiarImageComment(image: Bitmap, idComment: String) {
         val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
         imgRef.putBytes(Auxiliar.getBytes(image)!!)
+    }
+
+    fun getImgComment(comentario: Comentario): Bitmap {
+        var img: Bitmap? = null
+        runBlocking {
+            val job: Job = launch {
+                val data = imageComment(comentario.id)
+                img = Auxiliar.getBitmap(data)
+            }
+            job.join()
+        }
+        return img!!
+    }
+
+    private suspend fun imageComment(idComment: String): ByteArray {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        return imgRef.getBytes(ONE_MEGABYTE).await()
     }
 
 }
