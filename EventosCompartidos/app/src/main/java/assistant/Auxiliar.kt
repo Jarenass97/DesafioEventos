@@ -14,6 +14,7 @@ object Auxiliar {
     val LOCATION_REQUEST_CODE = 0
     val CODE_GALLERY = 1887
     val CODE_CAMERA = 1888
+    val RADIO_CIRCULO = 30.0
 
     lateinit var usuario: Usuario
 

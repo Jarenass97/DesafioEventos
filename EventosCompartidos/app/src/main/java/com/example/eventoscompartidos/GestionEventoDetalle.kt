@@ -173,7 +173,8 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_evento_detalle, menu)
+        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_evento_detalle_admin, menu)
+        else menuInflater.inflate(R.menu.menu_evento_detalle_usuario, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -181,8 +182,18 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         when (item.itemId) {
             R.id.miEditName -> editarNombre()
             R.id.miAddPlaces -> addPlaces()
+            R.id.miLocation -> indicarPresencialidad()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun indicarPresencialidad() {
+        if (evento.estoyApuntado()) {
+            val intent = Intent(this, QuedadasActivity::class.java)
+            intent.putExtra("evento", evento)
+            startActivity(intent)
+        } else Toast.makeText(this, getString(R.string.strNoEresAsistente), Toast.LENGTH_SHORT)
+            .show()
     }
 
     private fun irLugares() {

@@ -73,4 +73,8 @@
     <string name="strComentarioIncompleto">Impossible to comment without image or with empty comment</string>
     <string name="strNoApuntado">You are not signed up for this event</string>
     <string name="strDesapuntado">You have opted out of this event</string>
+    <string name="strAgradecerPuntualidad">Thank you for your punctuality</string>
+    <string name="strYaPresente">You have already indicated your presence at this event, thank you very much!</string>
+    <string name="strFueraDelCirculo">You have not yet reached the meeting point</string>
+    <string name="strNoEresAsistente">You are not a participant of this event</string>
 </resources>

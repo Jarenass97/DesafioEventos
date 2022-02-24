@@ -68,4 +68,8 @@
     <string name="strComentarioIncompleto">Imposible comentar sin imagen o con el comentario vacío</string>
     <string name="strNoApuntado">No estás apuntado a este evento</string>
     <string name="strDesapuntado">Te has desapuntado de este evento</string>
+    <string name="strAgradecerPuntualidad">Gracias por tu puntualidad</string>
+    <string name="strYaPresente">Ya has indicado tu presencia en este evento, ¡muchas gracias!</string>
+    <string name="strFueraDelCirculo">Aún no has llegado al punto de encuentro</string>
+    <string name="strNoEresAsistente">No eres un participante de este evento</string>
 </resources>

@@ -13,6 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.EventosCompartidos">
         <activity
+            android:name=".QuedadasActivity"
+            android:exported="false" />
+        <activity
             android:name=".ComentarioCreaterActivity"
             android:exported="false" />
         <activity

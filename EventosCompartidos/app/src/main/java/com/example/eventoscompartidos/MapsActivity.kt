@@ -8,6 +8,8 @@ import android.location.Geocoder
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -77,6 +79,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_maptype, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.mNormal -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            R.id.mHibrido -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun irPunto(loc: LatLng) {
