@@ -2,6 +2,7 @@ package assistant
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import assistant.Auxiliar.idEvento
 import assistant.Auxiliar.usuario
 import com.google.firebase.auth.FirebaseAuth
@@ -25,7 +26,7 @@ object BDFirebase {
     private val storageRef = Firebase.storage.reference
 
     //************************ USUARIOS ************************
-    val CARPETA_IMAGENES = "imgsUsuarios"
+    val CARPETA_IMAGENES = "FotosPerfil"
     val COL_USUARIOS = "usuarios"
     val EMAIL__USUARIOS = "email"
     val ROL__USUARIOS = "rol"
@@ -69,7 +70,8 @@ object BDFirebase {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val user = UsuarioItem(
                             dc.document.get(EMAIL__USUARIOS).toString(),
-                            dc.document.get(ACTIVADO__USUARIOS) as Boolean
+                            dc.document.get(ACTIVADO__USUARIOS) as Boolean,
+                            Rol.valueOf(dc.document.get(ROL__USUARIOS) as String)
                         )
                         usuarios.add(user)
                     }
@@ -200,6 +202,11 @@ object BDFirebase {
             }
     }
 
+    fun changeRol(user: UsuarioItem) {
+        db.collection(COL_USUARIOS).document(user.email)
+            .update(ROL__USUARIOS, user.rol)
+    }
+
     //************************ EVENTOS ************************
     val COL_EVENTOS = "eventos"
     val NOMBRE__EVENTOS = "nombre"
@@ -301,9 +308,31 @@ object BDFirebase {
         val keys = Lugar.getCampos()
         val lugares = ArrayList<Lugar>(0)
         for (d in data) {
-            lugares.add(Lugar(d[keys[0]] as String, location(d[keys[1]] as HashMap<String, *>)))
+            lugares.add(
+                Lugar(
+                    d[keys[0]] as String,
+                    location(d[keys[1]] as HashMap<String, *>),
+                    destriparComentarios(d)
+                )
+            )
         }
         return lugares
+    }
+
+    private fun destriparComentarios(d: HashMap<String, *>): ArrayList<Comentario> {
+        val keys = Lugar.getCampos()
+        val keysComments = Comentario.getCampos()
+        val comentarios = ArrayList<Comentario>(0)
+        for (c in d[keys[2]] as ArrayList<HashMap<String, *>>) {
+            comentarios.add(
+                Comentario(
+                    c[keysComments[0]] as String,
+                    c[keysComments[1]] as String,
+                    c[keysComments[2]] as String
+                )
+            )
+        }
+        return comentarios
     }
 
     private fun location(loc: HashMap<String, *>): Localizacion {
@@ -383,8 +412,37 @@ object BDFirebase {
             .update(LUGARES__EVENTOS, evento.lugares)
     }
 
-    fun changeRol(nuevoRol: Rol) {
-        db.collection(COL_USUARIOS).document(usuario.email)
-            .update(ROL__USUARIOS, nuevoRol)
+    fun actualizarComentariosLugar(evento: Evento) {
+        db.collection(COL_EVENTOS).document(idEvento(evento))
+            .update(LUGARES__EVENTOS, evento.lugares)
     }
+
+    fun cambiarImageComment(image: Bitmap, idComment: String) {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        imgRef.putBytes(Auxiliar.getBytes(image)!!)
+    }
+
+    fun getImgComment(comentario: Comentario): Bitmap {
+        var img: Bitmap? = null
+        runBlocking {
+            val job: Job = launch {
+                val data = imageComment(comentario.id)
+                img = Auxiliar.getBitmap(data)
+            }
+            job.join()
+        }
+        return img!!
+    }
+
+    private suspend fun imageComment(idComment: String): ByteArray {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        val ONE_MEGABYTE: Long = 1024 * 1024
+        return imgRef.getBytes(ONE_MEGABYTE).await()
+    }
+
+    fun deleteImageComment(idComment: String) {
+        val imgRef = storageRef.child("FotosComentarios/$idComment.jpg")
+        imgRef.delete()
+    }
+
 }

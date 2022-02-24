@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.BDFirebase
 import com.example.eventoscompartidos.R
+import model.Rol
 import model.UsuarioItem
 
 class GestionUsuariosAdapter(
@@ -39,6 +40,7 @@ class GestionUsuariosAdapter(
         RecyclerView.ViewHolder(view) {
         val imgIsActivated = view.findViewById<ImageView>(R.id.imgIsActivo)
         val txtUsuario = view.findViewById<TextView>(R.id.txtUsuarioGestion)
+        val btnUserAdmin = view.findViewById<ImageButton>(R.id.btnAdminOrUser)
 
         @SuppressLint("NotifyDataSetChanged")
         fun bind(
@@ -56,9 +58,18 @@ class GestionUsuariosAdapter(
                 setImageResource(R.drawable.ic_inactivo)
             }
             txtUsuario.text = user.email
+            btnUserAdmin.setImageResource(
+                if (user.isAdmin()) R.drawable.ic_administrator
+                else R.drawable.ic_not_administrator
+            )
+            btnUserAdmin.setOnClickListener {
+                user.rol = if (user.isAdmin()) Rol.USUARIO else Rol.ADMINISTRADOR
+                BDFirebase.changeRol(user)
+                gestionUsuariosAdapter.notifyDataSetChanged()
+            }
             itemView.setOnClickListener(View.OnClickListener {
                 user.activado = !user.activado
-                if(user.activado) BDFirebase.activarUsuario(user)
+                if (user.activado) BDFirebase.activarUsuario(user)
                 else BDFirebase.desactivarUsuario(user)
                 gestionUsuariosAdapter.notifyDataSetChanged()
             })

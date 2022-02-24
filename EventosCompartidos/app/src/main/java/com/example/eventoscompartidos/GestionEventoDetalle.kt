@@ -12,18 +12,18 @@ import android.location.Location
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
+import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
@@ -44,7 +44,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     private lateinit var evento: Evento
     lateinit var map: GoogleMap
     private val LOCATION_REQUEST_CODE: Int = 0
-    lateinit var myUbication: LatLng
+    var myUbication: LatLng = LatLng(40.4165, -3.70256)
     lateinit var adaptadorAsistentes: AsistentesAdapter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,14 +57,59 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
 
         cargarMapa()
         cargarDatos()
-        edFechaEventoDetalle.setOnClickListener {
-            showDatePickerDialog(edFechaEventoDetalle)
-        }
-        edHoraEventoDetalle.setOnClickListener {
-            showTimePickerDialog(edHoraEventoDetalle)
+        if (usuario.isAdmin()) {
+            edFechaEventoDetalle.setOnClickListener {
+                showDatePickerDialog(edFechaEventoDetalle)
+            }
+            edHoraEventoDetalle.setOnClickListener {
+                showTimePickerDialog(edHoraEventoDetalle)
+            }
+
         }
         btnInvitarUsuario.setOnClickListener {
-            mostrarUsuarios()
+            if (usuario.isAdmin()) mostrarUsuarios()
+            else apuntarse()
+        }
+        if (!usuario.isAdmin()) {
+            btnChangePuntoReunion.text = getString(R.string.strVerLugares)
+            btnSalirDeEvento.setOnClickListener {
+                desapuntarse()
+            }
+        }
+        btnChangePuntoReunion.setOnClickListener {
+            if (usuario.isAdmin()) cambiarUbicacion()
+            else irLugares()
+        }
+        btnSalirDeEvento.isVisible = !usuario.isAdmin()
+    }
+
+    private fun desapuntarse() {
+        if (evento.estoyApuntado()) {
+            evento.delAsistente(usuario.email)
+            Toast.makeText(this, getString(R.string.strDesapuntado), Toast.LENGTH_SHORT)
+                .show()
+            adaptadorAsistentes.notifyDataSetChanged()
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.strNoApuntado),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun apuntarse() {
+        if (evento.estoyApuntado())
+            Toast.makeText(
+                this,
+                getString(R.string.strYaApuntado),
+                Toast.LENGTH_SHORT
+            ).show()
+        else {
+            evento.addAsistente(Asistente(usuario.email))
+            Toast.makeText(this, getString(R.string.strApuntado, evento.nombre), Toast.LENGTH_SHORT)
+                .show()
+            adaptadorAsistentes.notifyDataSetChanged()
         }
     }
 
@@ -79,7 +124,9 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                 .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
                     val emailUsuario = adapter.getSelected()
                     if (emailUsuario.isNotEmpty()) {
-                        evento.addAsistente(Asistente(emailUsuario))
+                        evento.addAsistente(
+                            Asistente(emailUsuario)
+                        )
                         Toast.makeText(
                             this,
                             getString(R.string.strInvitacionCorrecta, emailUsuario),
@@ -126,23 +173,40 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu_evento_detalle, menu)
+        if (usuario.isAdmin()) menuInflater.inflate(R.menu.menu_evento_detalle_admin, menu)
+        else menuInflater.inflate(R.menu.menu_evento_detalle_usuario, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.miEditName -> editarNombre()
-            R.id.miAddPlaces -> addPlace()
+            R.id.miAddPlaces -> addPlaces()
+            R.id.miLocation -> indicarPresencialidad()
         }
         return super.onOptionsItemSelected(item)
     }
 
-    private fun addPlace() {
+    private fun indicarPresencialidad() {
+        if (evento.estoyApuntado()) {
+            val intent = Intent(this, QuedadasActivity::class.java)
+            intent.putExtra("evento", evento)
+            startActivity(intent)
+        } else Toast.makeText(this, getString(R.string.strNoEresAsistente), Toast.LENGTH_SHORT)
+            .show()
+    }
+
+    private fun irLugares() {
+        val intent = Intent(this, LugaresActivity::class.java)
+        intent.putExtra("evento", evento)
+        startActivityForResult(intent, Auxiliar.CODE_PLACES)
+    }
+
+    fun addPlaces() {
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("opcion", MapsOptions.ADD_PLACES)
         intent.putExtra("evento", evento)
-        startActivityForResult(intent, Auxiliar.CODE_ADD_PLACES)
+        startActivityForResult(intent, Auxiliar.CODE_PLACES)
     }
 
     private fun editarNombre() {
@@ -176,7 +240,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         map = googleMap
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
         enableMyLocation()
-        if (evento.puntoReunion != null) {
+        if (!evento.sinPuntoReunion()) {
             val pos = evento.localizacionPuntoReunion()
             map.addMarker(
                 MarkerOptions().position(pos).title(evento.nombre)
@@ -256,7 +320,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
         }
     }
 
-    fun cambiarUbicacion(view: View) {
+    fun cambiarUbicacion() {
         val intent = Intent(this, MapsActivity::class.java)
         intent.putExtra("opcion", MapsOptions.CHANGE_REUNION)
         startActivityForResult(intent, Auxiliar.CODE_CHANGE_UBICATION)
@@ -281,7 +345,7 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
                     cargarMapa()
                 }
             }
-            Auxiliar.CODE_ADD_PLACES -> evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
+            Auxiliar.CODE_PLACES -> evento = BDFirebase.getEvento(Auxiliar.idEvento(evento))
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

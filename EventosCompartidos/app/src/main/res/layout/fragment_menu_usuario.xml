@@ -7,23 +7,15 @@
     android:background="@color/yellow_dark">
 
     <ImageButton
-        android:id="@+id/btnGestionEvents"
+        android:id="@+id/btnListEvents"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:backgroundTint="@color/yellow_dark"
         app:srcCompat="@drawable/ic_events" />
 
-    <ImageButton
-        android:id="@+id/btnAdminUsuarios"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:backgroundTint="@color/yellow_dark"
-        app:srcCompat="@drawable/ic_usuarios" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/btnPerfilAdmin"
+        android:id="@+id/btnPerfilUsuario"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -40,7 +32,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/imgUsuarioMenuAdmin"
+                android:id="@+id/imgUsuarioMenuUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"

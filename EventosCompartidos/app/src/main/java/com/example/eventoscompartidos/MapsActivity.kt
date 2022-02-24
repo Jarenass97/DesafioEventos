@@ -8,6 +8,8 @@ import android.location.Geocoder
 import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -37,6 +39,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
     private lateinit var myUbication: LatLng
     lateinit var opcion: MapsOptions
     lateinit var evento: Evento
+    lateinit var lugar: Lugar
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +51,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         opcion = bun.getSerializable("opcion") as MapsOptions
         if (opcion == MapsOptions.ADD_PLACES)
             evento = bun.getSerializable("evento") as Evento
+        if (opcion == MapsOptions.MODIFY_PLACE) {
+            evento = bun.getSerializable("evento") as Evento
+            lugar = bun.getSerializable("lugar") as Lugar
+            title = lugar.nombre
+        }
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
@@ -73,6 +81,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_maptype, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.mNormal -> map.mapType = GoogleMap.MAP_TYPE_NORMAL
+            R.id.mHibrido -> map.mapType = GoogleMap.MAP_TYPE_HYBRID
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     private fun irPunto(loc: LatLng) {
         map.animateCamera(
             CameraUpdateFactory.newLatLngZoom(loc, 18f), 2000, null
@@ -84,16 +105,30 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         map.mapType = GoogleMap.MAP_TYPE_NORMAL
         enableMyLocation()
         obtenerMiUbi()
-        irMyUbication()
+        if (opcion != MapsOptions.MODIFY_PLACE) irMyUbication()
         map.setOnMapClickListener(this)
         if (opcion == MapsOptions.ADD_PLACES) toMarkPlaces()
+        if (opcion == MapsOptions.MODIFY_PLACE) markPlace()
+    }
+
+    private fun markPlace() {
+        map.addMarker(
+            MarkerOptions().position(lugar.latLng()).title(lugar.nombre).icon(
+                BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+            )
+        )
+        map.animateCamera(
+            CameraUpdateFactory.newLatLngZoom(lugar.latLng(), 18f), 1000, null
+        )
     }
 
     private fun toMarkPlaces() {
-        map.addMarker(
-            MarkerOptions().position(evento.localizacionPuntoReunion()).title(evento.nombre)
-                .snippet("${evento.fecha} ${evento.hora}")
-        )
+        if (!evento.sinPuntoReunion()) {
+            map.addMarker(
+                MarkerOptions().position(evento.localizacionPuntoReunion()).title(evento.nombre)
+                    .snippet("${evento.fecha} ${evento.hora}")
+            )
+        }
         for (lugar in evento.lugares) {
             map.addMarker(
                 MarkerOptions().position(lugar.latLng()).title(lugar.nombre).icon(
@@ -120,7 +155,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapCli
         when (opcion) {
             MapsOptions.CHANGE_REUNION -> changeReunion(loc)
             MapsOptions.ADD_PLACES -> addPlace(loc)
+            MapsOptions.MODIFY_PLACE -> modifyPlace(loc)
         }
+    }
+
+    private fun modifyPlace(loc: LatLng) {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.strConfirmar))
+            .setMessage(getString(R.string.strConfirmarCambioUbicacionLugar, lugar.nombre))
+            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                map.addMarker(
+                    MarkerOptions().position(loc).title(lugar.nombre).icon(
+                        BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                    )
+                )
+                val newLugar = Lugar(
+                    lugar.nombre,
+                    Localizacion(loc.latitude, loc.longitude),
+                    lugar.comentarios
+                )
+                evento.modifyPlace(lugar, newLugar)
+                BDFirebase.actualizarListaLugares(evento)
+                Toast.makeText(this, getString(R.string.strCambioLocLugar), Toast.LENGTH_SHORT).show()
+                setResult(RESULT_OK, intent)
+                finish()
+                view.dismiss()
+            }
+            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                view.dismiss()
+            }
+            .setCancelable(false)
+            .create().show()
     }
 
     private fun addPlace(loc: LatLng) {

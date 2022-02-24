@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
+import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import com.example.eventoscompartidos.R
 import com.google.firebase.ktx.Firebase
@@ -57,9 +58,11 @@ class AsistentesAdapter(
         ) {
             cargarImagen(asistente)
             txtNombre.text = asistente.email
-            itemView.setOnLongClickListener {
-                expulsar(asistente, asistentesAdapter)
-                true
+            if (usuario.isAdmin()) {
+                itemView.setOnLongClickListener {
+                    expulsar(asistente, asistentesAdapter)
+                    true
+                }
             }
         }
 
@@ -67,6 +70,7 @@ class AsistentesAdapter(
             val imgRef = storageRef.child("${BDFirebase.CARPETA_IMAGENES}/${asistente.email}.jpg")
             imgRef.getBytes(1024 * 1024)
                 .addOnSuccessListener { imgUsuario.setImageBitmap(Auxiliar.getBitmap(it)) }
+                .addOnFailureListener { imgUsuario.setImageResource(R.drawable.ic_usuario) }
         }
 
         private fun expulsar(asistente: Asistente, asistentesAdapter: AsistentesAdapter) {

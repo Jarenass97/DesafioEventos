@@ -1,4 +1,4 @@
-package com.example.eventoscompartidos.fragments.Administrador
+package com.example.eventoscompartidos.fragments.Usuario
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -12,26 +12,24 @@ import assistant.Auxiliar.usuario
 import com.example.eventoscompartidos.R
 import com.example.eventoscompartidos.fragments.PerfilUsuarioFragment
 import kotlinx.android.synthetic.main.fragment_menu_admin.*
+import kotlinx.android.synthetic.main.fragment_menu_usuario.*
 
-class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
+class MenuInferiorUsuarioFragment(val ventana: AppCompatActivity) : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_menu_admin, container, false)
+        return inflater.inflate(R.layout.fragment_menu_usuario, container, false)
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btnGestionEvents.setOnClickListener {
-            cargarGestionEventos()
+        btnListEvents.setOnClickListener {
+            cargarListadoEventos()
         }
-        btnAdminUsuarios.setOnClickListener {
-            cargarGestionUsuarios()
-        }
-        btnPerfilAdmin.setOnTouchListener { view, motionEvent ->
+        btnPerfilUsuario.setOnTouchListener { view, motionEvent ->
             when (motionEvent.action) {
                 MotionEvent.ACTION_DOWN -> view.setBackgroundResource(R.color.itemSelected)
                 MotionEvent.ACTION_UP -> {
@@ -41,24 +39,18 @@ class MenuInferiorAdminFragment(val ventana: AppCompatActivity) : Fragment() {
             }
             true
         }
-        if (usuario.img != null) imgUsuarioMenuAdmin.setImageBitmap(usuario.img)
+        if (usuario.img != null) imgUsuarioMenuUsuario.setImageBitmap(usuario.img)
     }
 
     private fun cargarPerfil() {
         ventana.title = getString(R.string.strPerfil)
-        val fragment = PerfilUsuarioFragment(ventana,imgUsuarioMenuAdmin)
+        val fragment = PerfilUsuarioFragment(ventana,imgUsuarioMenuUsuario)
         replaceFragmentVentana(fragment)
     }
 
-    private fun cargarGestionEventos() {
-        ventana.title = getString(R.string.strGestionEventos)
-        val fragment = GestionEventosFragment(ventana)
-        replaceFragmentVentana(fragment)
-    }
-
-    private fun cargarGestionUsuarios() {
-        ventana.title = getString(R.string.strGestionUsuarios)
-        val fragment = GestionUsuariosFragment(ventana)
+    private fun cargarListadoEventos() {
+        ventana.title = getString(R.string.strListadoEventos)
+        val fragment = ListadoEventosFragment(ventana)
         replaceFragmentVentana(fragment)
     }
 

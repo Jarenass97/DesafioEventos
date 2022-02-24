@@ -18,6 +18,20 @@
         app:layout_constraintTop_toTopOf="@+id/textView2"
         app:srcCompat="@drawable/ic_add" />
 
+    <ImageButton
+        android:id="@+id/btnSalirDeEvento"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="#00FFFFFF"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="@+id/btnInvitarUsuario"
+        app:layout_constraintEnd_toEndOf="@+id/rvAsistentes"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/btnInvitarUsuario"
+        app:layout_constraintTop_toTopOf="@+id/btnInvitarUsuario"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_out" />
+
     <TextView
         android:id="@+id/txtMensajeUbicacionEventoDetalle"
         style="@style/textViews"
@@ -53,7 +67,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:onClick="cambiarUbicacion"
         android:text="@string/strCambiarUbicacion"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/fragmentMapEvento"
@@ -152,4 +165,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edFechaEventoDetalle"
         app:layout_constraintVertical_bias="0.0" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,7 +13,7 @@ import assistant.BDFirebase
 import assistant.DatePickerFragment
 import assistant.TimePickerFragment
 import com.example.eventoscompartidos.R
-import kotlinx.android.synthetic.main.fragment_gestion_eventos.*
+import kotlinx.android.synthetic.main.fragment_listado.*
 import model.Evento
 
 class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
@@ -26,25 +26,25 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_gestion_eventos, container, false)
+        return inflater.inflate(R.layout.fragment_listado, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvGestionEventos.setHasFixedSize(true)
-        rvGestionEventos.layoutManager = LinearLayoutManager(ventana)
+        rvListado.setHasFixedSize(true)
+        rvListado.layoutManager = LinearLayoutManager(ventana)
         adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
-        rvGestionEventos.adapter = adaptador
+        rvListado.adapter = adaptador
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.menu_admin_events_fragment, menu)
+        inflater.inflate(R.menu.menu_add, menu)
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.miAddEvent -> crearEvento()
+            R.id.miAdd -> crearEvento()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -52,7 +52,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
     override fun onResume() {
         super.onResume()
         adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
-        rvGestionEventos.adapter = adaptador
+        rvListado.adapter = adaptador
     }
 
     private fun crearEvento() {
@@ -75,7 +75,7 @@ class GestionEventosFragment(val ventana: AppCompatActivity) : Fragment() {
                         )
                     BDFirebase.addEvento(ev)
                     adaptador = EventosAdapter(ventana, BDFirebase.getEventos())
-                    rvGestionEventos.adapter = adaptador
+                    rvListado.adapter = adaptador
                 } else {
                     Toast.makeText(ventana, getString(R.string.strCamposVacios), Toast.LENGTH_SHORT)
                         .show()

@@ -1,4 +1,4 @@
-package com.example.eventoscompartidos.fragments
+package com.example.eventoscompartidos
 
 import android.Manifest
 import android.app.Activity
@@ -6,93 +6,88 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.*
-import android.widget.EditText
-import android.widget.ImageView
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import assistant.BDFirebase
-import com.example.eventoscompartidos.MainActivity
-import com.example.eventoscompartidos.R
+import kotlinx.android.synthetic.main.activity_comentario_creater.*
+import kotlinx.android.synthetic.main.comentario_item.*
 import kotlinx.android.synthetic.main.fragment_perfil_usuario.*
-import model.Rol
+import model.Comentario
+import model.Evento
+import model.Lugar
 import java.io.FileNotFoundException
 import java.io.InputStream
 
-class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: ImageView) :
-    Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_perfil_usuario, container, false)
-    }
+class ComentarioCreaterActivity : AppCompatActivity() {
+    lateinit var lugar: Lugar
+    lateinit var evento: Evento
+    var image: Bitmap? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_comentario_creater)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        btnCambiarImagenUsuario.setOnClickListener {
+        val bun: Bundle = intent.extras!!
+        lugar = bun.getSerializable("lugar") as Lugar
+        evento = bun.getSerializable("evento") as Evento
+        title = getString(R.string.strNuevoComentario, lugar.nombre)
+        imgNuevoComentario.isVisible = false
+        btnElegirImagenComentario.setOnClickListener {
             cambiarFoto()
         }
-        btnChangeUsername.setOnClickListener {
-            cambiarUsername()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_save, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.miSave -> asegurar()
         }
-        if (usuario.img != null) imgUsuarioPerfil.setImageBitmap(usuario.img)
-        txtNombreUsuarioPerfil.text = getString(R.string.strUsername, usuario.username)
-        if (usuario.isAdmin()) {
-            rbAdmin.apply {
-                text = Rol.ADMINISTRADOR.toString()
-                isChecked = true
-            }
-            rbUser.text = Rol.USUARIO.toString()
-            rgRoles.setOnCheckedChangeListener { radioGroup, id ->
-                when (id) {
-                    rbAdmin.id -> usuario.rol = Rol.ADMINISTRADOR
-                    rbUser.id -> usuario.rol = Rol.USUARIO
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun asegurar() {
+        if (datosRellenos()) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.strConfirmar))
+                .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
+                    guardarComentario()
+                    view.dismiss()
                 }
-                cambiarRol()
-            }
-        } else lyRoles.isVisible = false
+                .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
+                    view.dismiss()
+                }
+                .setCancelable(true)
+                .create()
+                .show()
+        } else Toast.makeText(this, getString(R.string.strComentarioIncompleto), Toast.LENGTH_SHORT)
+            .show()
     }
 
-    private fun cambiarRol() {
-        val intent = Intent(ventana, MainActivity::class.java)
-        startActivity(intent)
-        ventana.finish()
-    }
+    private fun datosRellenos(): Boolean = edComentario.text.isNotEmpty() && image != null
 
-    private fun cambiarUsername() {
-        val dialog = layoutInflater.inflate(R.layout.dialog_pide_string, null)
-        val edNombre = dialog.findViewById<EditText>(R.id.edStringDialog)
-        edNombre.setText(usuario.username)
-        AlertDialog.Builder(ventana)
-            .setTitle("Cambiar nombre")
-            .setView(dialog)
-            .setPositiveButton(getString(R.string.strAceptar)) { view, _ ->
-                val nuevoNombre = edNombre.text.toString()
-                BDFirebase.changeUsername(nuevoNombre)
-                usuario.username = nuevoNombre
-                txtNombreUsuarioPerfil.text = getString(R.string.strUsername, usuario.username)
-                Toast.makeText(ventana, getString(R.string.strSuccess), Toast.LENGTH_SHORT).show()
-                view.dismiss()
-            }
-            .setNegativeButton(getString(R.string.strCancelar)) { view, _ ->
-                view.dismiss()
-            }
-            .setCancelable(true).create().show()
+    private fun guardarComentario() {
+        val comentario =
+            Comentario(edComentario.text.toString(), lugar.idNextComment(), usuario.email)
+        lugar.addComment(comentario, evento)
+        BDFirebase.cambiarImageComment(image!!, comentario.id)
+        finish()
     }
 
     private fun cambiarFoto() {
-        AlertDialog.Builder(ventana)
+        AlertDialog.Builder(this)
             .setTitle(getString(R.string.strElegirFoto))
             .setMessage(getString(R.string.strMensajeElegirFoto))
             .setPositiveButton(getString(R.string.strCamara)) { view, _ ->
@@ -120,12 +115,12 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
 
     private fun hacerFoto() {
         if (ContextCompat.checkSelfPermission(
-                ventana,
+                this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_DENIED
         )
             ActivityCompat.requestPermissions(
-                ventana,
+                this,
                 arrayOf(Manifest.permission.CAMERA),
                 Auxiliar.CODE_CAMERA
             )
@@ -150,7 +145,7 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
                         var imageStream: InputStream? = null
                         try {
                             imageStream = selectedImage.let {
-                                ventana.contentResolver.openInputStream(
+                                contentResolver.openInputStream(
                                     it
                                 )
                             }
@@ -165,11 +160,9 @@ class PerfilUsuarioFragment(val ventana: AppCompatActivity, val imgUsuarioMenu: 
         }
     }
 
-
     private fun cambiarImagen(image: Bitmap) {
-        BDFirebase.cambiarImageUser(image)
-        imgUsuarioPerfil.setImageBitmap(image)
-        imgUsuarioMenu.setImageBitmap(image)
-        usuario.asignarImagen(image)
+        this.image = image
+        imgNuevoComentario.isVisible = true
+        imgNuevoComentario.setImageBitmap(image)
     }
 }

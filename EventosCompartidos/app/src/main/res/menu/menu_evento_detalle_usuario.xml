@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/miAddEvent"
-        android:icon="@drawable/ic_add"
-        android:title="AddEvent"
+        android:id="@+id/miLocation"
+        android:icon="@drawable/ic_location"
+        android:title="Location"
         app:showAsAction="always" />
 </menu>
