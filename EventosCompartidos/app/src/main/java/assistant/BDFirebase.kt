@@ -70,7 +70,8 @@ object BDFirebase {
                     if (dc.type == DocumentChange.Type.ADDED) {
                         val user = UsuarioItem(
                             dc.document.get(EMAIL__USUARIOS).toString(),
-                            dc.document.get(ACTIVADO__USUARIOS) as Boolean
+                            dc.document.get(ACTIVADO__USUARIOS) as Boolean,
+                            Rol.valueOf(dc.document.get(ROL__USUARIOS) as String)
                         )
                         usuarios.add(user)
                     }
@@ -201,9 +202,9 @@ object BDFirebase {
             }
     }
 
-    fun changeRol(nuevoRol: Rol) {
-        db.collection(COL_USUARIOS).document(usuario.email)
-            .update(ROL__USUARIOS, nuevoRol)
+    fun changeRol(user: UsuarioItem) {
+        db.collection(COL_USUARIOS).document(user.email)
+            .update(ROL__USUARIOS, user.rol)
     }
 
     //************************ EVENTOS ************************
