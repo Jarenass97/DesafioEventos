@@ -275,7 +275,22 @@ object BDFirebase {
     }
 
     fun deleteEvento(idEvento: String) {
-        db.collection(COL_EVENTOS).document(idEvento).delete()
+        db.collection(COL_EVENTOS).document(idEvento)
+            .get()
+            .addOnSuccessListener {
+                val lugares =
+                    destriparLugares(it.get(LUGARES__EVENTOS) as ArrayList<HashMap<String, *>>)
+                eliminarImagenes(lugares)
+                db.collection(COL_EVENTOS).document(idEvento).delete()
+            }
+    }
+
+    private fun eliminarImagenes(lugares: ArrayList<Lugar>) {
+        for (l in lugares) {
+            for (c in l.comentarios) {
+                deleteImageComment(c.id)
+            }
+        }
     }
 
     fun getEvento(idEvento: String): Evento {
