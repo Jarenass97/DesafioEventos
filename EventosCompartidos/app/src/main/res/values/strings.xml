@@ -77,4 +77,5 @@
     <string name="strYaPresente">You have already indicated your presence at this event, thank you very much!</string>
     <string name="strFueraDelCirculo">You have not yet reached the meeting point</string>
     <string name="strNoEresAsistente">You are not a participant of this event</string>
+    <string name="strAusente">Absent</string>
 </resources>

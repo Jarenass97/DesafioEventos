@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.Auxiliar.usuario
@@ -47,6 +48,7 @@ class AsistentesAdapter(
         RecyclerView.ViewHolder(view) {
         val imgUsuario = view.findViewById<ImageView>(R.id.imgUsuarioItem)
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioItem)
+        val txtLlegada = view.findViewById<TextView>(R.id.txtLlegada)
         val storageRef = Firebase.storage.reference
 
         @SuppressLint("SetTextI18n")
@@ -58,6 +60,8 @@ class AsistentesAdapter(
         ) {
             cargarImagen(asistente)
             txtNombre.text = asistente.email
+            if (!asistente.sinHoraLlegada()) txtLlegada.text = asistente.horaLlegada
+            else txtLlegada.text = context.getString(R.string.strAusente)
             if (usuario.isAdmin()) {
                 itemView.setOnLongClickListener {
                     expulsar(asistente, asistentesAdapter)

@@ -1,7 +1,5 @@
 package model
 
-import android.util.Log
-import assistant.Auxiliar
 import assistant.Auxiliar.usuario
 import assistant.BDFirebase
 import com.google.android.gms.maps.model.LatLng
@@ -75,16 +73,19 @@ data class Evento(
 
     fun indicarPresencialidad() {
         for (a in asistentes) {
-            if (a.email == usuario.email) a.horaLlegada = getHoraActual()
+            if (a.email == usuario.email) a.horaLlegada = getFechaHoraActual()
         }
         BDFirebase.actualizarAsistentesEvento(this, asistentes)
     }
 
-    private fun getHoraActual(): String {
+    private fun getFechaHoraActual(): String {
         val c = Calendar.getInstance()
+        val year: Int = c.get(Calendar.YEAR)
+        val month: Int = c.get(Calendar.MONTH)
+        val day: Int = c.get(Calendar.DAY_OF_MONTH)
         val hour = c.get(Calendar.HOUR_OF_DAY)
         val minute = c.get(Calendar.MINUTE)
-        return "${String.format("%02d",hour)}:${String.format("%02d",minute)}"
+        return "${String.format("%02d",day)}/${String.format("%02d",month+1)}/$year ${String.format("%02d",hour)}:${String.format("%02d",minute)}"
     }
 
     fun estoyPresente(): Boolean {
