@@ -57,5 +57,12 @@ data class Evento(
         }
         return null
     }
+
+    fun delAsistente(email: String) {
+        for(a in asistentes){
+            if (a.email==email) asistentes.remove(a)
+        }
+        BDFirebase.actualizarAsistentesEvento(this, asistentes)
+    }
 }
 

@@ -71,4 +71,6 @@
     <string name="strTituloComentarios">Comments for %s</string>
     <string name="strNuevoComentario">New comment for %s</string>
     <string name="strComentarioIncompleto">Impossible to comment without image or with empty comment</string>
+    <string name="strNoApuntado">You are not signed up for this event</string>
+    <string name="strDesapuntado">You have opted out of this event</string>
 </resources>

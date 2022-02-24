@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
@@ -63,15 +64,37 @@ class GestionEventoDetalle : AppCompatActivity(), OnMapReadyCallback,
             edHoraEventoDetalle.setOnClickListener {
                 showTimePickerDialog(edHoraEventoDetalle)
             }
+
         }
         btnInvitarUsuario.setOnClickListener {
             if (usuario.isAdmin()) mostrarUsuarios()
             else apuntarse()
         }
-        if (!usuario.isAdmin()) btnChangePuntoReunion.text = getString(R.string.strVerLugares)
+        if (!usuario.isAdmin()) {
+            btnChangePuntoReunion.text = getString(R.string.strVerLugares)
+            btnSalirDeEvento.setOnClickListener {
+                desapuntarse()
+            }
+        }
         btnChangePuntoReunion.setOnClickListener {
             if (usuario.isAdmin()) cambiarUbicacion()
             else irLugares()
+        }
+        btnSalirDeEvento.isVisible = !usuario.isAdmin()
+    }
+
+    private fun desapuntarse() {
+        if (evento.estoyApuntado()) {
+            evento.delAsistente(usuario.email)
+            Toast.makeText(this, getString(R.string.strDesapuntado), Toast.LENGTH_SHORT)
+                .show()
+            adaptadorAsistentes.notifyDataSetChanged()
+        } else {
+            Toast.makeText(
+                this,
+                getString(R.string.strNoApuntado),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

@@ -66,4 +66,6 @@
     <string name="strTituloComentarios">Comentarios para %s</string>
     <string name="strNuevoComentario">Nuevo comentario para %s</string>
     <string name="strComentarioIncompleto">Imposible comentar sin imagen o con el comentario vacío</string>
+    <string name="strNoApuntado">No estás apuntado a este evento</string>
+    <string name="strDesapuntado">Te has desapuntado de este evento</string>
 </resources>
