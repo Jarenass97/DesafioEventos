@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import assistant.Auxiliar
 import assistant.BDFirebase
@@ -57,6 +58,7 @@ class UsuariosAinvitarAdapter(
         RecyclerView.ViewHolder(view) {
         val imgUsuario = view.findViewById<ImageView>(R.id.imgUsuarioItem)
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioItem)
+        val txtHoraLlegada = view.findViewById<TextView>(R.id.txtLlegada)
         val storageRef = Firebase.storage.reference
 
         @SuppressLint("SetTextI18n")
@@ -78,6 +80,7 @@ class UsuariosAinvitarAdapter(
             itemView.setOnClickListener {
                 marcarSeleccion(pos, adapter)
             }
+            txtHoraLlegada.isVisible = false
         }
 
         private fun marcarSeleccion(pos: Int, adapter: UsuariosAinvitarAdapter) {
